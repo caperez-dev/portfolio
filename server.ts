@@ -268,8 +268,8 @@ app.post('/api/contact', async (req, res) => {
   return res.json({
     success: true,
     message: savedToFirestore
-      ? 'Thank you! Your message has been encrypted & securely stored in Firebase Firestore.'
-      : 'Thank you! Your message has been transmitted securely.',
+      ? 'Thank you! Your message has been sent successfully and saved safely.'
+      : 'Thank you! Your message has been sent successfully.',
     savedToFirestore,
     hash: hash.substring(0, 16) + '...'
   });
