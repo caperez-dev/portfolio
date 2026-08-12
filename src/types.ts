@@ -30,6 +30,9 @@ export interface CertificationItem {
   title: string;
   issuer: string;
   date: string;
+  url?: string;
+  identifier?: string;
+  imageUrl?: string;
 }
 
 export interface ProjectItem {

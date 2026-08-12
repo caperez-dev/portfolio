@@ -133,17 +133,21 @@ export const resumeData: ResumeData = {
   certifications: [
     {
       title: "DevOps Foundations: DevSecOps (2018)",
-      issuer: "LinkedIn Learning",
-      date: "Apr 16, 2026"
+      issuer: "Henkel (LinkedIn Learning)",
+      date: "Apr 16, 2026",
+      identifier: "bbd712a31d49ccdfc756c3fa99ef534b8619367f8182e288ee77fb3b628367f2",
+      imageUrl: new URL('../assets/certifications/CertificateOfCompletion_DevOps Foundations DevSecOps 2018.png', import.meta.url).href
     },
     {
       title: "General Cybersecurity Awareness Training - English",
-      issuer: "Enterprise Security",
-      date: "Apr 14, 2026"
+      issuer: "Henkel",
+      date: "Apr 14, 2026",
+      url: "https://henkel.csod.com/ui/training/app/targetUser/3699955/trainingID/8936239d-6a78-44d6-8028-000af4ce0e90?trainingType=Course&action=112&isM6ILT=true&isOCSE=true&isU",
+      imageUrl: new URL('../assets/certifications/Carlos Alfonso B. Perez - General Cybersecurity Awareness Training - English.png', import.meta.url).href
     },
     {
       title: "ITIL Process Training: Incident Management & Problem Management",
-      issuer: "ITIL Training",
+      issuer: "Henkel",
       date: "Apr 7, 2026"
     },
     {
@@ -154,7 +158,9 @@ export const resumeData: ResumeData = {
     {
       title: "PHILNITS Passer (IT Passport Exam)",
       issuer: "ITPEC / PHILNITS",
-      date: "Oct 26, 2025"
+      date: "Oct 26, 2025",
+      url: "https://itpec.org/statsandresults/all-passers-information/Philippines/2025A_IP.pdf",
+      identifier: "IP01-0275"
     }
   ],
   projects: [

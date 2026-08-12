@@ -3,21 +3,70 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, lazy, Suspense, type MouseEvent, type ReactNode } from 'react';
 import { developerThemes } from './data/themes';
 import { ThemeOption } from './types';
 import { LoadingScreen } from './components/LoadingScreen';
 import { Navbar } from './components/Navbar';
 import { FloatingSidebar } from './components/FloatingSidebar';
 import { HeroBanner } from './components/HeroBanner';
-import { SkillsSection } from './components/SkillsSection';
-import { ExperienceSection } from './components/ExperienceSection';
-import { ProjectsSection } from './components/ProjectsSection';
-import { CertificationsSection } from './components/CertificationsSection';
-import { ContactSection } from './components/ContactSection';
-import { AIChatAssistant } from './components/AIChatAssistant';
-import { Code2, ArrowUp, Sparkles, ShieldCheck } from 'lucide-react';
 import { resumeData } from './data/resume';
+import { Code2, ArrowUp, Sparkles, ShieldCheck } from 'lucide-react';
+
+const ProjectsSection = lazy(() =>
+  import('./components/ProjectsSection').then((mod) => ({ default: mod.ProjectsSection }))
+);
+const SkillsSection = lazy(() =>
+  import('./components/SkillsSection').then((mod) => ({ default: mod.SkillsSection }))
+);
+const ExperienceSection = lazy(() =>
+  import('./components/ExperienceSection').then((mod) => ({ default: mod.ExperienceSection }))
+);
+const CertificationsSection = lazy(() =>
+  import('./components/CertificationsSection').then((mod) => ({ default: mod.CertificationsSection }))
+);
+const ContactSection = lazy(() =>
+  import('./components/ContactSection').then((mod) => ({ default: mod.ContactSection }))
+);
+const AIChatAssistant = lazy(() =>
+  import('./components/AIChatAssistant').then((mod) => ({ default: mod.AIChatAssistant }))
+);
+
+function LazySection({
+  children,
+  rootMargin = '0px 0px 400px 0px',
+  placeholder,
+}: {
+  children: ReactNode;
+  rootMargin?: string;
+  placeholder: ReactNode;
+}) {
+  const sectionRef = useRef<HTMLDivElement | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    if (isVisible || !sectionRef.current || typeof IntersectionObserver === 'undefined') return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin }
+    );
+
+    observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, [isVisible, rootMargin]);
+
+  return (
+    <div ref={sectionRef} className="min-h-[520px]">
+      {isVisible ? children : placeholder}
+    </div>
+  );
+}
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -25,29 +74,31 @@ export default function App() {
   const isDarkMode = true; // Strict Dark Mode per user requirement
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
+  const [pointerPosition, setPointerPosition] = useState({ x: 50, y: 50 });
+  const pointerRef = useRef({ x: 50, y: 50 });
+  const rafRef = useRef<number | null>(null);
 
-  // Global mouse position tracking for page-wide cursor glow
-  const [mousePos, setMousePos] = useState({ x: -1000, y: -1000 });
-  const [isMouseActive, setIsMouseActive] = useState(false);
+  const handlePointerMove = (event: MouseEvent<HTMLDivElement>) => {
+    pointerRef.current = {
+      x: (event.clientX / window.innerWidth) * 100,
+      y: (event.clientY / window.innerHeight) * 100,
+    };
+
+    if (rafRef.current === null) {
+      rafRef.current = requestAnimationFrame(() => {
+        setPointerPosition(pointerRef.current);
+        rafRef.current = null;
+      });
+    }
+  };
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
-      if (!isMouseActive) setIsMouseActive(true);
-    };
-
-    const handleMouseLeave = () => {
-      setIsMouseActive(false);
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    document.body.addEventListener('mouseleave', handleMouseLeave);
-
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      document.body.removeEventListener('mouseleave', handleMouseLeave);
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+      }
     };
-  }, [isMouseActive]);
+  }, []);
 
   // Scroll spy to track active section for navbar
   useEffect(() => {
@@ -86,13 +137,13 @@ export default function App() {
 
       <div
         className={`min-h-screen relative transition-colors duration-300 font-sans ${currentTheme.fontFamily} ${currentTheme.darkBg} ${currentTheme.darkText}`}
+        onMouseMove={handlePointerMove}
       >
-        {/* Page-Wide Interactive Cursor Glowing Aura */}
+        {/* Cursor-responsive ambient glow */}
         <div
-          className="pointer-events-none fixed inset-0 z-0 transition-opacity duration-300 ease-out"
+          className="pointer-events-none fixed inset-0 z-0"
           style={{
-            opacity: isMouseActive ? 1 : 0,
-            background: `radial-gradient(650px circle at ${mousePos.x}px ${mousePos.y}px, rgba(56, 189, 248, 0.18), transparent 80%)`,
+            backgroundImage: `radial-gradient(circle at ${pointerPosition.x}% ${pointerPosition.y}%, rgba(56,189,248,0.18), transparent 16%), radial-gradient(circle at 80% 80%, rgba(16,185,129,0.08), transparent 35%)`,
           }}
         />
         {/* Navigation Bar */}
@@ -113,15 +164,35 @@ export default function App() {
             onOpenChat={() => setIsChatOpen(true)}
           />
 
-          <ProjectsSection currentTheme={currentTheme} isDarkMode={isDarkMode} />
+          <LazySection placeholder={<div className="min-h-[520px] flex items-center justify-center text-slate-400">Loading projects...</div>}>
+            <Suspense fallback={<div className="min-h-[520px] flex items-center justify-center text-slate-400">Loading projects...</div>}>
+              <ProjectsSection currentTheme={currentTheme} isDarkMode={isDarkMode} />
+            </Suspense>
+          </LazySection>
 
-          <SkillsSection currentTheme={currentTheme} isDarkMode={isDarkMode} />
+          <LazySection placeholder={<div className="min-h-[520px] flex items-center justify-center text-slate-400">Loading skills...</div>}>
+            <Suspense fallback={<div className="min-h-[520px] flex items-center justify-center text-slate-400">Loading skills...</div>}>
+              <SkillsSection currentTheme={currentTheme} isDarkMode={isDarkMode} />
+            </Suspense>
+          </LazySection>
 
-          <ExperienceSection currentTheme={currentTheme} isDarkMode={isDarkMode} />
+          <LazySection placeholder={<div className="min-h-[520px] flex items-center justify-center text-slate-400">Loading experience...</div>}>
+            <Suspense fallback={<div className="min-h-[520px] flex items-center justify-center text-slate-400">Loading experience...</div>}>
+              <ExperienceSection currentTheme={currentTheme} isDarkMode={isDarkMode} />
+            </Suspense>
+          </LazySection>
 
-          <CertificationsSection currentTheme={currentTheme} isDarkMode={isDarkMode} />
+          <LazySection placeholder={<div className="min-h-[520px] flex items-center justify-center text-slate-400">Loading certifications...</div>}>
+            <Suspense fallback={<div className="min-h-[520px] flex items-center justify-center text-slate-400">Loading certifications...</div>}>
+              <CertificationsSection currentTheme={currentTheme} isDarkMode={isDarkMode} />
+            </Suspense>
+          </LazySection>
 
-          <ContactSection currentTheme={currentTheme} isDarkMode={isDarkMode} />
+          <LazySection placeholder={<div className="min-h-[520px] flex items-center justify-center text-slate-400">Loading contact...</div>}>
+            <Suspense fallback={<div className="min-h-[520px] flex items-center justify-center text-slate-400">Loading contact...</div>}>
+              <ContactSection currentTheme={currentTheme} isDarkMode={isDarkMode} />
+            </Suspense>
+          </LazySection>
         </main>
 
         {/* Floating AI Assistant Toggle Button (Bottom Right) */}
@@ -141,12 +212,16 @@ export default function App() {
         )}
 
         {/* AI Chat Drawer / Widget */}
-        <AIChatAssistant
-          currentTheme={currentTheme}
-          isDarkMode={isDarkMode}
-          isOpen={isChatOpen}
-          onClose={() => setIsChatOpen(false)}
-        />
+        {isChatOpen && (
+          <Suspense fallback={<div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/95 text-slate-200">Loading AI assistant...</div>}>
+            <AIChatAssistant
+              currentTheme={currentTheme}
+              isDarkMode={isDarkMode}
+              isOpen={isChatOpen}
+              onClose={() => setIsChatOpen(false)}
+            />
+          </Suspense>
+        )}
 
         {/* Footer */}
         <footer className="py-12 border-t text-xs font-mono transition-colors bg-slate-950 border-slate-800 text-slate-400">
@@ -157,9 +232,28 @@ export default function App() {
             </div>
 
             <div className="flex items-center gap-4 text-[11px]">
-              <span className="flex items-center gap-1 text-emerald-400">
-                <ShieldCheck className="w-3.5 h-3.5" /> Rate Limited & Validated API
-              </span>
+              <a
+                href={resumeData.contact.linkedin}
+                target="_blank"
+                rel="noreferrer"
+                className="text-slate-300 hover:text-cyan-400 transition-colors"
+              >
+                LinkedIn
+              </a>
+              <a
+                href={resumeData.contact.github}
+                target="_blank"
+                rel="noreferrer"
+                className="text-slate-300 hover:text-cyan-400 transition-colors"
+              >
+                GitHub
+              </a>
+              <a
+                href={`mailto:${resumeData.contact.email}`}
+                className="text-slate-300 hover:text-cyan-400 transition-colors"
+              >
+                Email
+              </a>
               <button
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                 className="p-1.5 rounded-lg border border-slate-800 hover:bg-slate-800 text-slate-300 transition-all"
