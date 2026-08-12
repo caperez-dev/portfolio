@@ -403,16 +403,25 @@ app.post('/api/chat', async (req, res) => {
       return res.status(400).json({ error: 'Message text is required.' });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
+        const rawApiKey = process.env.GEMINI_API_KEY?.trim();
+    const isConfiguredGeminiKey = Boolean(
+      rawApiKey &&
+        !/^MY_/.test(rawApiKey) &&
+        !/^YOUR_/.test(rawApiKey) &&
+        !/^PLACEHOLDER/i.test(rawApiKey) &&
+        !/^CHANGE/.test(rawApiKey) &&
+        rawApiKey !== 'undefined' &&
+        rawApiKey !== 'null'
+    );
 
-    if (!apiKey) {
-      // Fallback response if GEMINI_API_KEY is not set
+    if (!isConfiguredGeminiKey || !rawApiKey) {
+      // Fallback response if GEMINI_API_KEY is missing or clearly a placeholder value
       return res.json({
-        reply: `Hello! I am Carlos's portfolio assistant. Currently, the GEMINI_API_KEY is not configured in the environment settings, but here is what I can tell you: Carlos Alfonso B. Perez is a Cum Laude IT graduate from UST Manila with internship experience in enterprise software packaging at Henkel. You can download his CV or contact him directly at alfonso.cperez08@gmail.com!`
+        reply: `Hello! I am Carlos's portfolio assistant. Currently, the GEMINI_API_KEY is not configured or is a placeholder value, so I am responding from the built-in resume summary. Carlos Alfonso B. Perez is a Cum Laude IT graduate from UST Manila with internship experience in enterprise software packaging at Henkel. You can contact him directly at alfonso.cperez08@gmail.com.`
       });
     }
 
-    const ai = new GoogleGenAI({ apiKey });
+    const ai = new GoogleGenAI({ apiKey: rawApiKey });
 
     const prompt = `${CARLOS_RESUME_GROUNDING_CONTEXT}
 

@@ -122,9 +122,6 @@ export function AIChatAssistant({
             <div>
               <div className="text-xs font-bold font-mono flex items-center gap-1.5">
                 <span>Carlos's AI Assistant</span>
-                <span className="px-1.5 py-0.5 rounded text-[9px] bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 font-mono">
-                  Grounded
-                </span>
               </div>
               <div className="text-[10px] text-slate-300 font-sans">Strictly answers from resume facts</div>
             </div>
