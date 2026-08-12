@@ -131,12 +131,21 @@ export function SkillsSection({ currentTheme, isDarkMode }: SkillsSectionProps) 
             transition={{
               layout: { duration: 0.3, ease: [0.4, 0, 0.2, 1] }
             }}
-            className={`p-5 sm:p-6 rounded-2xl border shadow-xl overflow-hidden ${
+            className={`relative p-5 sm:p-6 rounded-2xl border shadow-xl overflow-hidden ${
               isDarkMode
                 ? `${currentTheme.darkCard} ${currentTheme.darkBorder}`
                 : `${currentTheme.lightCard} ${currentTheme.lightBorder}`
             }`}
           >
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 rounded-2xl pointer-events-none -z-10"
+              style={{
+                backgroundImage:
+                  'repeating-linear-gradient(135deg, rgba(255,255,255,0.08) 0, rgba(255,255,255,0.08) 1px, transparent 1px, transparent 8px)',
+                opacity: isDarkMode ? 0.12 : 0.08
+              }}
+            />
             {/* Filter Buttons Header */}
             <div className="flex flex-wrap items-center gap-2 mb-6 pb-4 border-b border-slate-800/80">
               <span className="text-xs font-mono font-medium text-slate-400 mr-1 flex items-center gap-1.5 shrink-0">
