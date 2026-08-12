@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+.font-outfit {
+  font-family: 'Outfit', sans-serif;
+}
+
+.font-space {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+section {
+  scroll-margin-top: 4.5rem;
+}
