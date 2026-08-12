@@ -22,45 +22,47 @@ const CubeIcon = () => (
 );
 
 // Brand photo mapping for software technology items
-function getSkillIcon(name: string) {
-  const nameLower = name.toLowerCase();
+const skillLogoMap: Record<string, string> = {
+  angular: new URL('../assets/skills/angularjs.png', import.meta.url).href,
+  bootstrap: new URL('../assets/skills/bootstrap.png', import.meta.url).href,
+  canva: new URL('../assets/skills/canva.png', import.meta.url).href,
+  css3: new URL('../assets/skills/CSS3.png', import.meta.url).href,
+  drawio: new URL('../assets/skills/drawio.png', import.meta.url).href,
+  express: new URL('../assets/skills/expressjs.png', import.meta.url).href,
+  figma: new URL('../assets/skills/figma.png', import.meta.url).href,
+  firebase: new URL('../assets/skills/firebase.png', import.meta.url).href,
+  git: new URL('../assets/skills/git.png', import.meta.url).href,
+  github: new URL('../assets/skills/github.png', import.meta.url).href,
+  heidisql: new URL('../assets/skills/heidisql.png', import.meta.url).href,
+  html5: new URL('../assets/skills/html5.png', import.meta.url).href,
+  lucidchart: new URL('../assets/skills/lucidchart.png', import.meta.url).href,
+  java: new URL('../assets/skills/java.png', import.meta.url).href,
+  javascript: new URL('../assets/skills/javascript.png', import.meta.url).href,
+  laravel: new URL('../assets/skills/phplaravel.png', import.meta.url).href,
+  materializecss: new URL('../assets/skills/materializecss.png', import.meta.url).href,
+  mysql: new URL('../assets/skills/mysqlworkbench.png', import.meta.url).href,
+  patchmypc: new URL('../assets/skills/patchmypc.png', import.meta.url).href,
+  php: new URL('../assets/skills/php.png', import.meta.url).href,
+  powershell: new URL('../assets/skills/powershell.png', import.meta.url).href,
+  react: new URL('../assets/skills/reactjs.png', import.meta.url).href,
+  sdlc: new URL('../assets/skills/sdlc.png', import.meta.url).href,
+  trello: new URL('../assets/skills/trello.png', import.meta.url).href,
+  servicenow: new URL('../assets/skills/servicenow.png', import.meta.url).href,
+};
 
-  let src = '';
+function getSkillIcon(name: string, logoKey?: string) {
+  const candidateKey = (logoKey || name)
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '');
 
-  if (nameLower.includes('php') && !nameLower.includes('laravel')) src = '/assets/skills/php.svg';
-  else if (nameLower.includes('laravel')) src = '/assets/skills/laravel.svg';
-  else if (nameLower.includes('java') && !nameLower.includes('script')) src = '/assets/skills/java.svg';
-  else if (nameLower.includes('javascript') || nameLower === 'js') src = '/assets/skills/javascript.svg';
-  else if (nameLower.includes('html')) src = '/assets/skills/html5.svg';
-  else if (nameLower.includes('css') && !nameLower.includes('materialize')) src = '/assets/skills/css3.svg';
-  else if (nameLower.includes('react')) src = '/assets/skills/reactjs.svg';
-  else if (nameLower.includes('angular')) src = '/assets/skills/angularjs.svg';
-  else if (nameLower.includes('express')) src = '/assets/skills/expressjs.svg';
-  else if (nameLower.includes('bootstrap')) src = '/assets/skills/bootstrap.svg';
-  else if (nameLower.includes('materialize')) src = '/assets/skills/materializecss.svg';
-  else if (nameLower.includes('mysql')) src = '/assets/skills/mysql-workbench.svg';
-  else if (nameLower.includes('heidisql')) src = '/assets/skills/heidisql.svg';
-  else if (nameLower.includes('firebase') || nameLower.includes('firestore')) src = '/assets/skills/firebase.svg';
-  else if (nameLower.includes('git') && !nameLower.includes('github')) src = '/assets/skills/git.svg';
-  else if (nameLower.includes('github')) src = '/assets/skills/github.svg';
-  else if (nameLower.includes('sdlc')) src = '/assets/skills/sdlc.svg';
-  else if (nameLower.includes('agile') || nameLower.includes('kanban') || nameLower.includes('scrum')) src = '/assets/skills/agile.svg';
-  else if (nameLower.includes('figma')) src = '/assets/skills/figma.svg';
-  else if (nameLower.includes('canva')) src = '/assets/skills/canva.svg';
-  else if (nameLower.includes('draw.io') || nameLower.includes('draw')) src = '/assets/skills/drawio.svg';
-  else if (nameLower.includes('lucid')) src = '/assets/skills/lucidchart.svg';
-  else if (nameLower.includes('powershell')) src = '/assets/skills/powershell.svg';
-  else if (nameLower.includes('patch my pc') || nameLower.includes('patchmypc') || nameLower.includes('packaging')) src = '/assets/skills/patchmypc.svg';
-  else if (nameLower.includes('servicenow')) src = '/assets/skills/servicenow.svg';
-  else if (nameLower.includes('intune')) src = '/assets/skills/intunewin.svg';
-  else if (nameLower.includes('installer')) src = '/assets/skills/installer.svg';
+  const src = skillLogoMap[candidateKey];
 
   if (src) {
     return (
       <img
         src={src}
         alt={name}
-        className="w-full h-full object-contain p-0.5 rounded"
+        className="w-full h-full object-contain rounded-lg"
         loading="lazy"
       />
     );
@@ -198,11 +200,11 @@ export function SkillsSection({ currentTheme, isDarkMode }: SkillsSectionProps) 
                     className={`flex flex-col items-center justify-center p-3.5 rounded-xl border transition-colors text-center gap-2 group ${
                       isDarkMode
                         ? 'bg-slate-900/90 border-slate-800 hover:border-cyan-500/50 hover:bg-slate-800/90 hover:shadow-lg hover:shadow-cyan-950/30'
-                        : 'bg-slate-100 border-slate-200 hover:border-cyan-500/50 hover:bg-slate-200'
+                        : 'bg-slate-100 border border-slate-200 hover:border-cyan-500/50 hover:bg-slate-200'
                     }`}
                   >
-                    <div className="w-9 h-9 flex items-center justify-center transition-transform duration-200 group-hover:scale-110">
-                      {getSkillIcon(skill.name)}
+                    <div className="w-10 aspect-square flex items-center justify-center rounded-2xl overflow-hidden transition-transform duration-200 group-hover:scale-110 bg-slate-950/5 dark:bg-white/5">
+                      {getSkillIcon(skill.name, skill.logoKey)}
                     </div>
                     <span className="text-xs font-semibold text-slate-200 group-hover:text-cyan-300 transition-colors leading-tight text-center">
                       {skill.name}

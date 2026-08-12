@@ -23,7 +23,7 @@ export const resumeData: ResumeData = {
     ],
     webDev: [
       {
-        category: "Software Packaging & IT Ops",
+        category: "Software Packaging",
         skills: [
           { name: "Software Packaging and Deployment", logoKey: "packaging" },
           { name: "PowerShell Scripting", logoKey: "powershell" },
@@ -58,7 +58,7 @@ export const resumeData: ResumeData = {
         category: "Databases",
         skills: [
           { name: "MySQL Workbench", logoKey: "mysql" },
-          { name: "HeidiSQL", logoKey: "database" },
+          { name: "HeidiSQL", logoKey: "heidisql" },
           { name: "Firebase Firestore", logoKey: "firebase" }
         ]
       },
@@ -72,17 +72,17 @@ export const resumeData: ResumeData = {
       {
         category: "Methodologies",
         skills: [
-          { name: "SDLC", logoKey: "cpu" },
-          { name: "Agile (Scrum & Kanban)", logoKey: "kanban" }
+          { name: "SDLC", logoKey: "sdlc" },
+          { name: "Agile (Scrum & Kanban)", logoKey: "trello" }
         ]
       },
       {
         category: "Wireframe & Design",
         skills: [
           { name: "Figma", logoKey: "figma" },
-          { name: "Canva", logoKey: "palette" },
-          { name: "Draw.io", logoKey: "diagram" },
-          { name: "Lucidchart", logoKey: "diagram" }
+          { name: "Canva", logoKey: "canva" },
+          { name: "Draw.io", logoKey: "drawio" },
+          { name: "Lucidchart", logoKey: "lucidchart" }
         ]
       }
     ],

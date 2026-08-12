@@ -11,7 +11,7 @@ interface HeroBannerProps {
   onOpenChat: () => void;
 }
 
-const TYPEWRITER_WORDS = ['Full-stack developer', 'Freelance'];
+const TYPEWRITER_WORDS = ['Full-Stack Developer', "It's Freelancer"];
 
 export function HeroBanner({ currentTheme, isDarkMode, onOpenChat }: HeroBannerProps) {
   // Typewriter state

@@ -2,9 +2,10 @@ import { motion } from 'motion/react';
 import { resumeData } from '../data/resume';
 import { ThemeOption } from '../types';
 import { Briefcase, Calendar, MapPin, CheckCircle2, Terminal, Building2, GraduationCap, Award, BookOpen } from 'lucide-react';
-import { HenkelLogo } from './logos/HenkelLogo';
-import { UstLogo } from './logos/UstLogo';
-import { DlslLogo } from './logos/DlslLogo';
+
+const henkelLogo = new URL('../assets/work-education/henkel.png', import.meta.url).href;
+const ustLogo = new URL('../assets/work-education/ust.png', import.meta.url).href;
+const dlslLogo = new URL('../assets/work-education/dlsl.png', import.meta.url).href;
 
 interface ExperienceSectionProps {
   currentTheme: ThemeOption;
@@ -57,9 +58,9 @@ export function ExperienceSection({ currentTheme, isDarkMode }: ExperienceSectio
                 {/* Left Side of Timeline Line (Desktop md+): Square Logo ABOVE Date Range */}
                 <div className="hidden md:flex md:w-[130px] pr-5 pt-1 flex-col items-end shrink-0 text-right space-y-2">
                   {/* Square Enclosed Company Logo */}
-                  <div className="w-14 h-14 rounded-xl bg-white shadow-md border border-slate-200/90 p-1 flex items-center justify-center shrink-0 transition-transform duration-300 hover:scale-105 aspect-square overflow-hidden">
+                  <div className="w-14 h-14 rounded-xl bg-slate-900 shadow-md border border-slate-200/90 flex items-center justify-center shrink-0 transition-transform duration-300 hover:scale-105 aspect-square overflow-hidden">
                     {exp.companyLogo === 'henkel' || exp.company.toLowerCase().includes('henkel') ? (
-                      <HenkelLogo className="w-full h-full object-contain" />
+                      <img src={henkelLogo} alt="Henkel" className="w-full h-full object-cover" />
                     ) : (
                       <Building2 className="w-7 h-7 text-slate-700" />
                     )}
@@ -101,9 +102,9 @@ export function ExperienceSection({ currentTheme, isDarkMode }: ExperienceSectio
                       <div className="min-w-0">
                         {/* Mobile Square Logo & Date Badge */}
                         <div className="md:hidden flex items-center gap-3 mb-3">
-                          <div className="w-12 h-12 rounded-lg bg-white shadow-md border border-slate-200/90 p-1 flex items-center justify-center shrink-0 aspect-square overflow-hidden">
+                          <div className="w-12 h-12 rounded-lg bg-slate-900 shadow-md border border-slate-200/90 flex items-center justify-center shrink-0 aspect-square overflow-hidden">
                             {exp.companyLogo === 'henkel' || exp.company.toLowerCase().includes('henkel') ? (
-                              <HenkelLogo className="w-full h-full object-contain" />
+                              <img src={henkelLogo} alt="Henkel" className="w-full h-full object-cover" />
                             ) : (
                               <Building2 className="w-6 h-6 text-slate-700" />
                             )}
@@ -170,8 +171,7 @@ export function ExperienceSection({ currentTheme, isDarkMode }: ExperienceSectio
                     <GraduationCap className="w-3 h-3" />
                   </div>
                 </div>
-                <div className="pl-10 md:pl-8 flex items-center gap-2 text-cyan-400 font-mono text-xs font-bold uppercase tracking-wider">
-                  <GraduationCap className="w-4 h-4" />
+                <div className="pl-16 md:pl-14 flex items-center gap-2 text-cyan-400 font-mono text-xs font-bold uppercase tracking-wider">
                   <span>Education & Academic Background</span>
                 </div>
               </div>
@@ -194,11 +194,11 @@ export function ExperienceSection({ currentTheme, isDarkMode }: ExperienceSectio
                   {/* Left Side of Timeline Line (Desktop md+): Academic Logo ABOVE Date Range */}
                   <div className="hidden md:flex md:w-[130px] pr-5 pt-1 flex-col items-end shrink-0 text-right space-y-2">
                     {/* Square Academic Logo Container */}
-                    <div className="w-14 h-14 rounded-xl bg-slate-900 shadow-md border border-cyan-500/30 p-1.5 flex items-center justify-center shrink-0 transition-transform duration-300 hover:scale-105 aspect-square overflow-hidden">
-                      {isUst ? (
-                        <UstLogo className="w-full h-full object-contain" />
-                      ) : isDlsl ? (
-                        <DlslLogo className="w-full h-full object-contain" />
+<div className="w-14 h-14 rounded-xl bg-slate-900 shadow-md border border-cyan-500/30 flex items-center justify-center shrink-0 transition-transform duration-300 hover:scale-105 aspect-square overflow-hidden">
+                        {isUst ? (
+                          <img src={ustLogo} alt="UST" className="w-full h-full object-cover" />
+                        ) : isDlsl ? (
+                          <img src={dlslLogo} alt="DLSL" className="w-full h-full object-cover" />
                       ) : (
                         <GraduationCap className="w-7 h-7 text-cyan-400" />
                       )}
@@ -239,11 +239,11 @@ export function ExperienceSection({ currentTheme, isDarkMode }: ExperienceSectio
                         <div className="min-w-0">
                           {/* Mobile Square Logo & Date Badge */}
                           <div className="md:hidden flex items-center gap-3 mb-3">
-                            <div className="w-12 h-12 rounded-lg bg-slate-900 shadow-md border border-cyan-500/30 p-1.5 flex items-center justify-center shrink-0 aspect-square overflow-hidden">
+                            <div className="w-12 h-12 rounded-lg bg-slate-900 shadow-md border border-cyan-500/30 flex items-center justify-center shrink-0 aspect-square overflow-hidden">
                               {isUst ? (
-                                <UstLogo className="w-full h-full object-contain" />
+                                <img src={ustLogo} alt="UST" className="w-full h-full object-cover" />
                               ) : isDlsl ? (
-                                <DlslLogo className="w-full h-full object-contain" />
+                                <img src={dlslLogo} alt="DLSL" className="w-full h-full object-cover" />
                               ) : (
                                 <GraduationCap className="w-6 h-6 text-cyan-400" />
                               )}
