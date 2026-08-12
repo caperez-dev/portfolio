@@ -131,7 +131,7 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
             Contact Carlos
           </h2>
           <p className="text-sm text-slate-400 mt-2 max-w-2xl">
-            Have an open software development opportunity, IT packaging task, or technical inquiry? Send a direct message below.
+            Got a project? Let's build it.
           </p>
         </motion.div>
 
