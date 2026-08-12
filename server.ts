@@ -2,6 +2,7 @@ import express from 'express';
 import path from 'path';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
+import sgMail from '@sendgrid/mail';
 import { GoogleGenAI } from '@google/genai';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -16,6 +17,29 @@ app.use(express.json({ limit: '100kb' }));
 
 // Initialize Firebase Firestore if configured
 let firestoreDb: any = null;
+
+const sendgridApiKey = process.env.SENDGRID_API_KEY;
+let emailConfigured = false;
+const contactRecipient = process.env.MAIL_TO || 'alfonso.cperez08@gmail.com';
+
+function parseMailFromAddress(from: string) {
+  const match = from.match(/<([^>]+)>/);
+  return match ? match[1].trim() : from.trim();
+}
+
+function parseMailFromName(from: string) {
+  const match = from.match(/^\s*([^<]+)\s*</);
+  return match ? match[1].trim() : 'Portfolio Contact Form';
+}
+
+const mailFromEmail = process.env.MAIL_FROM_EMAIL || parseMailFromAddress(process.env.MAIL_FROM || 'Portfolio Contact Form <no-reply@portfolio-alfonsocperez.firebaseapp.com>');
+const mailFromName = process.env.MAIL_FROM_NAME || parseMailFromName(process.env.MAIL_FROM || 'Portfolio Contact Form <no-reply@portfolio-alfonsocperez.firebaseapp.com>');
+const defaultMailFrom = { email: mailFromEmail, name: mailFromName };
+
+if (sendgridApiKey) {
+  sgMail.setApiKey(sendgridApiKey);
+  emailConfigured = true;
+}
 
 try {
   const firebaseConfig = {
@@ -82,6 +106,81 @@ function sanitizeInput(input: string): string {
     .replace(/\//g, '&#x2F;')
     .trim();
 }
+
+async function sendContactNotificationEmail(contact: {
+  fullName: string;
+  email: string;
+  phone: string;
+  subject: string;
+  message: string;
+  createdAt: string;
+}): Promise<boolean> {
+  if (!emailConfigured) {
+    return false;
+  }
+
+  try {
+    await sgMail.send({
+      from: defaultMailFrom,
+      to: contactRecipient,
+      subject: `Portfolio contact form: ${contact.subject}`,
+      text: `New contact message from ${contact.fullName} <${contact.email}>\n\nPhone: ${contact.phone}\nSubject: ${contact.subject}\n\nMessage:\n${contact.message}\n\nSubmitted: ${contact.createdAt}`,
+      html: `
+        <div style="background:#0b132b;color:#e2e8f0;font-family:Arial,Helvetica,sans-serif;padding:24px;">
+          <div style="max-width:600px;margin:0 auto;border:1px solid #233554;border-radius:20px;overflow:hidden;background:#111e3a;box-shadow:0 20px 60px rgba(0,0,0,.25);">
+            <div style="background:linear-gradient(135deg,#0b132b 0%,#1a2d4c 100%);padding:28px 32px;text-align:center;">
+              <p style="margin:0;font-size:14px;text-transform:uppercase;letter-spacing:.2em;color:#7dd3fc;">New message received</p>
+              <h1 style="margin:10px 0 0;font-size:28px;color:#ffffff;">Portfolio Contact Form</h1>
+            </div>
+
+            <div style="padding:28px 32px;line-height:1.6;color:#cbd5e1;">
+              <p style="margin:0 0 16px;font-size:15px;">You have a new inquiry from the website contact form. Review the message below and follow up as needed.</p>
+
+              <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-bottom:24px;">
+                <tr>
+                  <td style="padding:12px 0;border-bottom:1px solid rgba(148,163,184,.15);font-size:13px;color:#94a3b8;width:28%;">Name</td>
+                  <td style="padding:12px 0;border-bottom:1px solid rgba(148,163,184,.15);font-weight:600;color:#ffffff;">${contact.fullName}</td>
+                </tr>
+                <tr>
+                  <td style="padding:12px 0;border-bottom:1px solid rgba(148,163,184,.15);font-size:13px;color:#94a3b8;">Email</td>
+                  <td style="padding:12px 0;border-bottom:1px solid rgba(148,163,184,.15);font-weight:600;color:#ffffff;">${contact.email}</td>
+                </tr>
+                <tr>
+                  <td style="padding:12px 0;border-bottom:1px solid rgba(148,163,184,.15);font-size:13px;color:#94a3b8;">Phone</td>
+                  <td style="padding:12px 0;border-bottom:1px solid rgba(148,163,184,.15);font-weight:600;color:#ffffff;">${contact.phone}</td>
+                </tr>
+                <tr>
+                  <td style="padding:12px 0;font-size:13px;color:#94a3b8;">Subject</td>
+                  <td style="padding:12px 0;font-weight:600;color:#ffffff;">${contact.subject}</td>
+                </tr>
+              </table>
+
+              <div style="background:#152a4a;border:1px solid rgba(148,163,184,.12);border-radius:16px;padding:20px;">
+                <p style="margin:0 0 12px;font-size:14px;color:#7dd3fc;font-weight:700;">Message</p>
+                <p style="margin:0;font-size:14px;white-space:pre-wrap;color:#e2e8f0;">${contact.message.replace(/\n/g, '<br>')}</p>
+              </div>
+
+              <p style="margin:24px 0 0;font-size:13px;color:#94a3b8;">Received: <strong style="color:#ffffff;">${contact.createdAt}</strong></p>
+            </div>
+
+            <div style="background:#0b132b;border-top:1px solid rgba(148,163,184,.12);padding:20px 32px;text-align:center;">
+              <p style="margin:0;font-size:13px;color:#7dd3fc;">Carlos Alfonso Perez</p>
+              <p style="margin:6px 0 0;font-size:12px;color:#94a3b8;">Makati City, Metro Manila, Philippines</p>
+            </div>
+          </div>
+        </div>
+      `
+    });
+    return true;
+  } catch (err: any) {
+    console.error('[Email] Failed to send contact notification via SendGrid:', err);
+    if (err?.response?.body) {
+      console.error('[Email] SendGrid response:', JSON.stringify(err.response.body, null, 2));
+    }
+    return false;
+  }
+}
+
 
 // Full Resume Grounding Context for Gemini Assistant
 const CARLOS_RESUME_GROUNDING_CONTEXT = `
@@ -170,7 +269,8 @@ app.get('/api/health', (req, res) => {
     status: 'online',
     timestamp: new Date().toISOString(),
     firestoreConnected: !!firestoreDb,
-    geminiKeyPresent: !!process.env.GEMINI_API_KEY
+    geminiKeyPresent: !!process.env.GEMINI_API_KEY,
+    emailConfigured: !!sendgridApiKey
   });
 });
 
@@ -248,6 +348,7 @@ app.post('/api/contact', async (req, res) => {
   };
 
   let savedToFirestore = false;
+  let emailSent = false;
 
   // 5. Store in Firebase Firestore or Memory fallback
   try {
@@ -265,13 +366,31 @@ app.post('/api/contact', async (req, res) => {
     memoryContacts.push(contactDoc);
   }
 
+  // 6. Send a notification email
+  try {
+    emailSent = await sendContactNotificationEmail({
+      fullName: cleanFullName,
+      email: cleanEmail,
+      phone: cleanPhone,
+      subject: cleanSubject,
+      message: cleanMessage,
+      createdAt: timestampStr
+    });
+  } catch (emailErr) {
+    console.error('[Email] Unexpected error when sending notification:', emailErr);
+  }
+
+  const userMessage = savedToFirestore
+    ? emailSent
+      ? 'Thanks! Your message was received and I’ll review it shortly.'
+      : 'Thanks! Your message was received. I’ll review it shortly, even though email notification could not be sent right now.'
+    : 'Thanks! Your message was sent successfully.';
+
   return res.json({
     success: true,
-    message: savedToFirestore
-      ? 'Thank you! Your message has been sent successfully and saved safely.'
-      : 'Thank you! Your message has been sent successfully.',
+    message: userMessage,
     savedToFirestore,
-    hash: hash.substring(0, 16) + '...'
+    emailSent
   });
 });
 

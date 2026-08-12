@@ -231,11 +231,6 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
                 )}
                 <div className="space-y-1">
                   <p className="font-bold">{submitResult.message}</p>
-                  {submitResult.hash && (
-                    <p className="text-[10px] text-slate-400">
-                      Audit Trail SHA-256 Hash: <code className="text-cyan-300">{submitResult.hash}</code>
-                    </p>
-                  )}
                 </div>
               </div>
             )}
