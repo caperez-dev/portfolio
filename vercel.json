@@ -25,7 +25,7 @@
   ],
   "functions": {
     "api/**/*.ts": {
-      "runtime": "@vercel/node@3.2.8",
+      "runtime": "@vercel/node@3.0.24",
       "maxDuration": 30,
       "includeFiles": "api/_shared.ts"
     }
