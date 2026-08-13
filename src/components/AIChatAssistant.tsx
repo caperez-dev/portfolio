@@ -67,9 +67,17 @@ export function AIChatAssistant({
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-vercel-protection-bypass': '1'
+        },
         body: JSON.stringify({ message: text.trim() })
       });
+
+      if (response.status === 401) {
+        throw new Error('Vercel deployment protection is blocking the API. Please disable Standard Protection or Password Protection in Vercel Project Settings → Deployment Protection.');
+      }
 
       const data = await response.json();
 
@@ -81,13 +89,17 @@ export function AIChatAssistant({
       };
 
       setMessages((prev) => [...prev, assistantMsg]);
-    } catch (err) {
+    } catch (err: any) {
+      const friendlyMsg =
+        err?.message?.includes('Vercel deployment protection')
+          ? "⚠️ Deployment protection is currently blocking the chat. Carlos needs to disable 'Standard Protection' in his Vercel Project Settings under Deployment Protection. Please contact him at alfonso.cperez08@gmail.com!"
+          : 'Network error communicating with AI server. Please try again in a moment.';
       setMessages((prev) => [
         ...prev,
         {
           id: (Date.now() + 1).toString(),
           sender: 'assistant',
-          text: 'Network error communicating with AI server. Please try again.',
+          text: friendlyMsg,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }
       ]);

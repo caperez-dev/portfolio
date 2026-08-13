@@ -67,8 +67,10 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
     try {
       const response = await fetch('/api/contact', {
         method: 'POST',
+        credentials: 'same-origin',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'x-vercel-protection-bypass': '1'
         },
         body: JSON.stringify({ ...formData, phone: phonePayload })
       });
