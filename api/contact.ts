@@ -16,57 +16,130 @@ export const config = {
 };
 
 let firestoreDb: ReturnType<typeof getFirestore> | null = null;
+let firestoreInitAttempted = false;
 let emailConfigured = false;
 let emailInitError: string | null = null;
 let firestoreInitError: string | null = null;
+let firestoreEnabled = true;
 
-function parseServiceAccount() {
-  const raw = process.env.FIREBASE_SERVICE_ACCOUNT_JSON?.trim();
-  if (raw) {
-    try {
-      return JSON.parse(raw);
-    } catch (parseErr: any) {
-      firestoreInitError = `FIREBASE_SERVICE_ACCOUNT_JSON is not valid JSON: ${parseErr?.message || parseErr}`;
-      console.warn('[Vercel /api/contact]', firestoreInitError);
-      return null;
+function stripOuterQuotes(s: string): string {
+  if (s.length >= 2) {
+    const first = s.charAt(0);
+    const last = s.charAt(s.length - 1);
+    if ((first === '"' && last === '"') || (first === "'" && last === "'")) {
+      return s.slice(1, -1);
     }
   }
-  return null;
+  return s;
+}
+
+function parseServiceAccount(): { parsed: ServiceAccount | null; wasProvided: boolean } {
+  const envRaw = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
+  const rawProvided = typeof envRaw === 'string' && envRaw.trim().length > 0;
+  if (!rawProvided) {
+    return { parsed: null, wasProvided: false };
+  }
+  let raw = envRaw!.trim();
+  raw = stripOuterQuotes(raw);
+  raw = raw.replace(/\r/g, '').trim();
+  try {
+    const obj = JSON.parse(raw);
+    if (!obj || typeof obj !== 'object') {
+      throw new Error('Parsed value is not a JSON object.');
+    }
+    if (!obj.project_id) {
+      throw new Error('Service account JSON is missing required "project_id" field.');
+    }
+    if (!obj.private_key) {
+      throw new Error('Service account JSON is missing required "private_key" field.');
+    }
+    if (!obj.client_email) {
+      throw new Error('Service account JSON is missing required "client_email" field.');
+    }
+    if (typeof obj.private_key === 'string') {
+      obj.private_key = obj.private_key.replace(/\\n/g, '\n');
+    }
+    console.log('[Vercel /api/contact] Service account JSON parsed OK:', {
+      project_id: obj.project_id,
+      client_email: obj.client_email
+    });
+    return { parsed: obj as ServiceAccount, wasProvided: true };
+  } catch (parseErr: any) {
+    firestoreInitError = `FIREBASE_SERVICE_ACCOUNT_JSON is set but not valid JSON: ${parseErr?.message || parseErr}. ` +
+      `Tip: In Vercel env vars, paste the RAW JSON object contents WITHOUT wrapping extra quotes.`;
+    console.warn('[Vercel /api/contact]', firestoreInitError);
+    console.warn('[Vercel /api/contact] Raw value preview (first 200 chars):', (envRaw || '').slice(0, 200));
+    firestoreEnabled = false;
+    return { parsed: null, wasProvided: true };
+  }
 }
 
 function initFirestore() {
-  if (firestoreDb) return firestoreDb;
+  if (firestoreInitAttempted) return firestoreDb;
+  firestoreInitAttempted = true;
+  if (!firestoreEnabled) {
+    return null;
+  }
   try {
-    const projectId = process.env.FIREBASE_PROJECT_ID;
-    const serviceAccount = parseServiceAccount();
+    const projectId = process.env.FIREBASE_PROJECT_ID?.trim();
+    const { parsed: serviceAccount, wasProvided } = parseServiceAccount();
 
-    if (!projectId) {
-      firestoreInitError = 'FIREBASE_PROJECT_ID env var is missing.';
+    if (!projectId && !serviceAccount) {
+      firestoreInitError = 'FIREBASE_PROJECT_ID and FIREBASE_SERVICE_ACCOUNT_JSON are both missing. Firestore writes disabled.';
       console.warn('[Vercel /api/contact] Firestore init skipped:', firestoreInitError);
+      firestoreEnabled = false;
+      return null;
+    }
+    if (!projectId && serviceAccount?.projectId) {
+      // projectId already on credential is OK, admin SDK will pick it up
+    }
+    if (!serviceAccount) {
+      if (wasProvided) {
+        firestoreInitError = firestoreInitError || 'FIREBASE_SERVICE_ACCOUNT_JSON failed to parse (see earlier log). Firestore writes disabled.';
+      } else {
+        firestoreInitError = 'FIREBASE_SERVICE_ACCOUNT_JSON is NOT set. Falling back to Application Default Credentials on Vercel will FAIL — Firestore writes disabled.';
+      }
+      console.warn('[Vercel /api/contact] Firestore disabled:', firestoreInitError);
+      firestoreEnabled = false;
       return null;
     }
 
     if (getApps().length === 0) {
-      if (serviceAccount) {
-        initializeApp({
-          credential: cert(serviceAccount as ServiceAccount),
-          projectId
-        });
-      } else {
-        initializeApp({ projectId });
-      }
+      initializeApp({
+        credential: cert(serviceAccount),
+        projectId: projectId || serviceAccount.projectId
+      });
+      console.log('[Vercel /api/contact] Firebase Admin initialized OK (with service account credential)');
     } else {
       getApp();
     }
 
     firestoreDb = getFirestore();
+    firestoreInitError = null;
     return firestoreDb;
   } catch (err: any) {
-    firestoreInitError = err?.message || String(err);
-    console.warn('[Vercel /api/contact] Firestore init notice:', err);
+    firestoreInitError = `Firebase Admin init failed: ${err?.message || String(err)}`;
+    console.error('[Vercel /api/contact]', firestoreInitError, err);
     firestoreDb = null;
+    firestoreEnabled = false;
     return null;
   }
+}
+
+function looksLikeValidSendgridKey(key: string): { ok: boolean; reason?: string } {
+  const trimmed = key.trim();
+  if (!trimmed.startsWith('SG.')) {
+    return { ok: false, reason: `SendGrid API keys MUST start with "SG." prefix (found prefix: "${trimmed.slice(0, 6)}..."). Generate a new one from SendGrid → Settings → API Keys → Create API Key → "Full Access" or "Restricted Access: Mail Send".` };
+  }
+  const parts = trimmed.split('.');
+  if (parts.length < 3) {
+    return { ok: false, reason: `SendGrid API key should have 3 dot-separated segments (SG.<public>.<secret>). Got ${parts.length} segments.` };
+  }
+  const len = trimmed.length;
+  if (len < 40) {
+    return { ok: false, reason: `SendGrid API key looks suspiciously short (${len} chars). It is probably truncated.` };
+  }
+  return { ok: true };
 }
 
 function initEmail() {
@@ -75,6 +148,13 @@ function initEmail() {
   if (!sendgridApiKey) {
     emailInitError = 'SENDGRID_API_KEY env var is missing or empty.';
     console.warn('[Vercel /api/contact] SendGrid init skipped:', emailInitError);
+    return false;
+  }
+  const trimmedKey = sendgridApiKey.trim();
+  const keyCheck = looksLikeValidSendgridKey(trimmedKey);
+  if (!keyCheck.ok) {
+    emailInitError = `Invalid SendGrid API key format: ${keyCheck.reason} (prefix observed: "${trimmedKey.slice(0, 6)}...", length: ${trimmedKey.length})`;
+    console.warn('[Vercel /api/contact] SendGrid init aborted:', emailInitError);
     return false;
   }
   try {
@@ -134,7 +214,7 @@ async function sendContactNotificationEmail(contact: {
     toEmail: contactRecipient,
     fromEmail: mailFromEmail,
     fromName: mailFromName,
-    sendgridKeyPrefix: sendgridApiKey ? `${sendgridApiKey.slice(0, 6)}...` : '(missing)'
+    sendgridKeyPrefix: sendgridApiKey ? `${sendgridApiKey.trim().slice(0, 8)}...` : '(missing)'
   };
 
   if (!initEmail()) {
