@@ -184,9 +184,9 @@ export function ProjectsSection({ currentTheme, isDarkMode }: ProjectsSectionPro
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.7, ease: 'easeOut' }}
-          className="mb-16 text-center"
+          className="mb-16 text-left"
         >
-          <div className="flex items-center justify-center gap-2 text-[#ff9500] text-xs font-semibold uppercase tracking-wide mb-3">
+          <div className="flex items-center gap-2 text-[#ff9500] text-xs font-semibold uppercase tracking-wide mb-3">
             <FolderGit2 className="w-4 h-4" />
             <span>01 // Featured Projects</span>
           </div>

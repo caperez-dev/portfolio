@@ -5,7 +5,7 @@ import { ThemeOption } from '../types';
 import { Award, Calendar, CheckCircle2, Shield, ExternalLink, X } from 'lucide-react';
 const philnitsLogo = new URL('../assets/certifications/philnits.png', import.meta.url).href;
 const henkelLogo = new URL('../assets/work-education/henkel.png', import.meta.url).href;
-// test
+
 interface CertificationsSectionProps {
   currentTheme: ThemeOption;
   isDarkMode: boolean;
@@ -15,7 +15,7 @@ export function CertificationsSection({ currentTheme, isDarkMode }: Certificatio
   const [activeImage, setActiveImage] = useState<{ src: string; title: string } | null>(null);
 
   return (
-    <section id="certifications" className="py-12 sm:py-16 border-t border-white/8 relative scroll-mt-16 bg-[#141414]">
+    <section id="certifications" className="py-12 sm:py-16 border-t border-white/8 relative scroll-mt-16">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}
         <motion.div
@@ -29,7 +29,11 @@ export function CertificationsSection({ currentTheme, isDarkMode }: Certificatio
             <Award className="w-4 h-4 text-[#ff9500]" />
             <span>05 // Certifications</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+          <h2
+            className={`text-3xl sm:text-4xl font-extrabold tracking-tight ${
+              isDarkMode ? currentTheme.darkText : currentTheme.lightText
+            }`}
+          >
             Certifications, Achievements & Trainings
           </h2>
         </motion.div>
@@ -43,7 +47,11 @@ export function CertificationsSection({ currentTheme, isDarkMode }: Certificatio
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.6, delay: index * 0.08, ease: 'easeOut' }}
-              className="p-5 rounded-2xl border shadow-md flex flex-col justify-between transition-all hover:scale-[1.02] bg-[#1c1c1e]/65 backdrop-blur-xl border-white/10 hover:border-[#ff9500]/40 hover:shadow-[#ff9500]/10 hover:shadow-lg"
+              className={`p-5 rounded-2xl border shadow-md flex flex-col justify-between transition-all hover:scale-[1.02] hover:border-[#ff9500]/40 hover:shadow-[#ff9500]/10 hover:shadow-lg ${
+                isDarkMode
+                  ? `${currentTheme.darkCard} ${currentTheme.darkBorder}`
+                  : `${currentTheme.lightCard} ${currentTheme.lightBorder}`
+              }`}
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-center gap-2 mb-3">

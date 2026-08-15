@@ -106,13 +106,8 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
   };
 
   return (
-    <section id="contact" className="py-16 sm:py-20 border-t border-white/8 relative scroll-mt-16 bg-[#141414] overflow-hidden">
-      {/* Decorative Ambient Background Glows */}
-      <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#ff9500]/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-[#ffb340]/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(#1c1c1e_1px,transparent_1px)] [background-size:24px_24px] opacity-25 pointer-events-none" />
-
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <section id="contact" className="py-12 sm:py-16 border-t border-white/8 relative scroll-mt-16">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -125,7 +120,11 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
             <Mail className="w-4 h-4 text-[#ff9500]" />
             <span>06 // Contact</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+          <h2
+            className={`text-3xl sm:text-4xl font-extrabold tracking-tight ${
+              isDarkMode ? currentTheme.darkText : currentTheme.lightText
+            }`}
+          >
             Contact Carlos
           </h2>
           <p className="text-sm text-white/80 mt-2 max-w-2xl">
@@ -140,7 +139,11 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.7, ease: 'easeOut' }}
-            className="p-6 rounded-2xl border flex flex-col justify-between bg-[#1c1c1e]/65 backdrop-blur-xl border-white/10"
+            className={`p-6 rounded-2xl border flex flex-col justify-between shadow-xl ${
+              isDarkMode
+                ? `${currentTheme.darkCard} ${currentTheme.darkBorder}`
+                : `${currentTheme.lightCard} ${currentTheme.lightBorder}`
+            }`}
           >
             <div className="space-y-6">
               <h3 className="text-lg font-bold text-white border-b border-white/8 pb-3">
@@ -207,7 +210,11 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.7, delay: 0.1, ease: 'easeOut' }}
-            className="lg:col-span-2 p-6 sm:p-8 rounded-2xl border shadow-xl bg-[#1c1c1e]/60 backdrop-blur-xl border-white/10"
+            className={`lg:col-span-2 p-6 sm:p-8 rounded-2xl border shadow-xl ${
+              isDarkMode
+                ? `${currentTheme.darkCard} ${currentTheme.darkBorder}`
+                : `${currentTheme.lightCard} ${currentTheme.lightBorder}`
+            }`}
           >
             {submitResult && (
               <div

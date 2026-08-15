@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { Download, ArrowRight, MapPin } from 'lucide-react';
 import { resumeData } from '../data/resume';
 import { generateResumePDF } from '../utils/pdfGenerator';
+import { scrollToSection } from '../utils/scrollToSection';
 import { ThemeOption } from '../types';
 
 interface HeroBannerProps {
@@ -179,10 +180,7 @@ export function HeroBanner({ currentTheme, isDarkMode }: HeroBannerProps) {
             href="#projects"
             onClick={(e) => {
               e.preventDefault();
-              const projectsEl = document.querySelector('#projects');
-              if (projectsEl) {
-                projectsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              }
+              void scrollToSection('projects');
             }}
             className="px-6 py-3.5 rounded-2xl font-bold text-sm text-black shadow-2xl shadow-[#ff9500]/25 transition-all duration-300 flex items-center gap-2 hover:-translate-y-1 active:scale-95 cursor-pointer"
             style={{ background: 'linear-gradient(135deg, #ff9500 0%, #ffb340 100%)' }}

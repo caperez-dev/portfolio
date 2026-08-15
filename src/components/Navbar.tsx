@@ -12,12 +12,14 @@ interface NavbarProps {
   currentTheme: ThemeOption;
   isDarkMode: boolean;
   activeSection: string;
+  onNavigate: (sectionId: string) => void;
 }
 
 export function Navbar({
   currentTheme,
   isDarkMode,
-  activeSection
+  activeSection,
+  onNavigate
 }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -32,22 +34,19 @@ export function Navbar({
 
   const handleNavClick = (href: string) => {
     setIsMobileMenuOpen(false);
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+    onNavigate(href.replace('#', ''));
   };
 
   return (
     <header
       id="main-navbar"
-      className="fixed top-4 sm:top-6 left-4 sm:left-6 right-4 sm:right-6 z-40 rounded-2xl backdrop-blur-2xl border border-white/10 shadow-2xl shadow-black/40"
+      className="fixed top-4 sm:top-6 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-2rem)] max-w-[900px] sm:w-[min(900px,80vw)] rounded-2xl backdrop-blur-2xl border border-white/10 shadow-2xl shadow-black/40"
       style={{
         background: 'rgba(20, 20, 20, 0.85)',
         backdropFilter: 'blur(20px)'
       }}
     >
-      <div className="px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div className="px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         {/* Brand */}
         <a
           href="#home"
@@ -55,7 +54,7 @@ export function Navbar({
             e.preventDefault();
             handleNavClick('#home');
           }}
-          className="flex items-center gap-1 group py-1"
+          className="flex-shrink-0 flex items-center gap-1 group py-1"
           id="navbar-brand-link"
         >
           <img
@@ -66,7 +65,7 @@ export function Navbar({
         </a>
 
         {/* Desktop Nav Links */}
-        <nav className="hidden xl:flex items-center gap-1 text-xs font-medium" id="desktop-nav-links">
+        <nav className="hidden lg:flex items-center justify-center gap-1 text-xs font-medium flex-1 min-w-0" id="desktop-nav-links">
           {navLinks.map((link) => {
             const isActive = activeSection === link.href.replace('#', '');
             return (
@@ -103,31 +102,29 @@ export function Navbar({
           })}
         </nav>
 
-        {/* Controls: Download CV, Theme Selector */}
-        <div className="flex items-center gap-1.5">
-          {/* Download CV Button */}
-          <button
-            onClick={generateResumePDF}
-            id="download-cv-btn"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-black transition-all shadow-lg shadow-[#ff9500]/20 hover:scale-105 hover:-translate-y-0.5 active:scale-95"
-            style={{
-              background: 'linear-gradient(135deg,#ff9500,#ffb340)'
-            }}
-            title="Download Resume PDF"
-          >
-            <Paperclip className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Download CV</span>
-          </button>
+        {/* Mobile Menu Toggle */}
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="lg:hidden flex-shrink-0 p-2 rounded-lg border border-white/10 text-white/75"
+          id="mobile-menu-btn"
+          aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+        >
+          {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
 
-          {/* Mobile Menu Toggle */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="xl:hidden p-2 rounded-lg border border-white/10 text-white/75"
-            id="mobile-menu-btn"
-          >
-            {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-        </div>
+        {/* Download CV Button */}
+        <button
+          onClick={generateResumePDF}
+          id="download-cv-btn"
+          className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-black transition-all shadow-lg shadow-[#ff9500]/20 hover:scale-105 hover:-translate-y-0.5 active:scale-95"
+          style={{
+            background: 'linear-gradient(135deg,#ff9500,#ffb340)'
+          }}
+          title="Download Resume PDF"
+        >
+          <Paperclip className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline">Download CV</span>
+        </button>
       </div>
 
       {/* Mobile Menu Overlay */}
@@ -137,7 +134,7 @@ export function Navbar({
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="xl:hidden border-t border-white/8 px-4 py-3 space-y-1"
+            className="lg:hidden border-t border-white/8 px-4 py-3 space-y-1"
             style={{
               background: 'rgba(20, 20, 20, 0.4)'
             }}

@@ -11,7 +11,8 @@ import { Navbar } from './components/Navbar';
 import { FloatingSidebar } from './components/FloatingSidebar';
 import { HeroBanner } from './components/HeroBanner';
 import { resumeData } from './data/resume';
-import { Code2, ArrowUp, Sparkles, ShieldCheck, Briefcase } from 'lucide-react';
+import { scrollToSection, getIsScrollingToSection } from './utils/scrollToSection';
+import { Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 const ProjectsSection = lazy(() =>
@@ -127,34 +128,67 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const sections = [
+    const sectionIds = [
       'home',
       'projects',
       'skills',
       'experience',
-      'education',
       'certifications',
-      'contact'
+      'contact',
     ];
 
-    const handleScroll = () => {
-      const scrollPos = window.scrollY + 200;
-      for (const sectionId of sections) {
+    const updateActiveSection = () => {
+      if (getIsScrollingToSection()) return;
+
+      const scrollPos = window.scrollY + 120;
+      let current = sectionIds[0];
+
+      for (const sectionId of sectionIds) {
         const el = document.getElementById(sectionId);
-        if (el) {
-          const top = el.offsetTop;
-          const height = el.offsetHeight;
-          if (scrollPos >= top && scrollPos < top + height) {
-            setActiveSection(sectionId);
-            break;
-          }
+        if (!el) continue;
+
+        const top = el.getBoundingClientRect().top + window.scrollY;
+        if (scrollPos >= top) {
+          current = sectionId;
         }
       }
+
+      setActiveSection(current);
     };
 
+    let scrollTicking = false;
+    const handleScroll = () => {
+      if (scrollTicking) return;
+      scrollTicking = true;
+      requestAnimationFrame(() => {
+        updateActiveSection();
+        scrollTicking = false;
+      });
+    };
+
+    updateActiveSection();
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('resize', updateActiveSection, { passive: true });
+
+    const main = document.querySelector('main');
+    const mutationObserver =
+      main &&
+      new MutationObserver(() => {
+        updateActiveSection();
+      });
+    mutationObserver?.observe(main, { childList: true, subtree: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', updateActiveSection);
+      mutationObserver?.disconnect();
+    };
   }, []);
+
+  const handleSectionNavigate = (sectionId: string) => {
+    setActiveSection(sectionId);
+    void scrollToSection(sectionId);
+  };
 
   return (
     <>
@@ -191,6 +225,7 @@ export default function App() {
           currentTheme={currentTheme}
           isDarkMode={isDarkMode}
           activeSection={activeSection}
+          onNavigate={handleSectionNavigate}
         />
 
         {/* Floating LinkedIn Sidebar */}
