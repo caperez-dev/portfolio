@@ -292,118 +292,147 @@ async function sendContactNotificationEmail(contact: {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-  res.setHeader('Pragma', 'no-cache');
-  res.setHeader('Expires', '0');
-
-  if (req.method === 'OPTIONS') {
-    return res.status(204).end();
-  }
-
-  if (req.method !== 'POST') {
-    return json(res, 405, { error: 'Method Not Allowed' });
-  }
-
-  const clientIp =
-    (req.headers['x-forwarded-for'] as string)?.split(',')[0] ||
-    (req as any).socket?.remoteAddress ||
-    '127.0.0.1';
-
-  const { errors, values } = validateContact(req.body);
-  if (Object.keys(errors).length > 0) {
-    return json(res, 400, {
-      success: false,
-      message: 'Validation failed. Please correct highlighted fields.',
-      errors
-    });
-  }
-
-  const cleanFullName = sanitizeInput(values.fullName);
-  const cleanEmail = sanitizeInput(values.email);
-  const cleanPhone = sanitizeInput(values.phone);
-  const cleanSubject = sanitizeInput(values.subject);
-  const cleanMessage = sanitizeInput(values.message);
-
-  const timestampStr = new Date().toISOString();
-  const auditHash = crypto
-    .createHash('sha256')
-    .update(`${cleanEmail}-${timestampStr}-${clientIp}`)
-    .digest('hex');
-
-  const contactDoc = {
-    fullName: cleanFullName,
-    email: cleanEmail,
-    phone: cleanPhone,
-    subject: cleanSubject,
-    message: cleanMessage,
-    auditHash,
-    clientIpHash: crypto.createHash('sha256').update(clientIp).digest('hex'),
-    createdAt: timestampStr
-  };
-
-  let savedToFirestore = false;
-  let firestoreError: string | null = firestoreInitError;
-  let emailSent = false;
-  let emailError: any = emailInitError ? { init: emailInitError } : undefined;
-  let emailDebug: any = undefined;
-
-  try {
-    const db = initFirestore();
-    if (db) {
-      await db.collection('contacts').add({
-        ...contactDoc,
-        timestamp: FieldValue.serverTimestamp()
-      });
-      savedToFirestore = true;
-    } else if (firestoreInitError) {
-      firestoreError = firestoreInitError;
+  let suppressUnhandled = true;
+  const rejectionTimer = setTimeout(() => { suppressUnhandled = false; }, 60000);
+  const prevUnhandledRejection = process.listeners('unhandledRejection');
+  process.removeAllListeners('unhandledRejection');
+  process.once('unhandledRejection', (reason: any, promise) => {
+    if (suppressUnhandled) {
+      console.error('[Vercel /api/contact] Caught async unhandledRejection (suppressed crash):', reason?.stack || reason?.message || reason);
+      try { clearTimeout(rejectionTimer); } catch {}
+    } else {
+      prevUnhandledRejection.forEach(l => process.on('unhandledRejection', l));
+      process.emit('unhandledRejection', reason, promise);
     }
-  } catch (dbErr: any) {
-    firestoreError = dbErr?.message || String(dbErr);
-    console.error('[Vercel /api/contact] Firestore save failed:', dbErr);
-  }
+  });
 
   try {
-    const result = await sendContactNotificationEmail({
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+
+    if (req.method === 'OPTIONS') {
+      return res.status(204).end();
+    }
+
+    if (req.method !== 'POST') {
+      return json(res, 405, { error: 'Method Not Allowed' });
+    }
+
+    const clientIp =
+      (req.headers['x-forwarded-for'] as string)?.split(',')[0] ||
+      (req as any).socket?.remoteAddress ||
+      '127.0.0.1';
+
+    const { errors, values } = validateContact(req.body);
+    if (Object.keys(errors).length > 0) {
+      return json(res, 400, {
+        success: false,
+        message: 'Validation failed. Please correct highlighted fields.',
+        errors
+      });
+    }
+
+    const cleanFullName = sanitizeInput(values.fullName);
+    const cleanEmail = sanitizeInput(values.email);
+    const cleanPhone = sanitizeInput(values.phone);
+    const cleanSubject = sanitizeInput(values.subject);
+    const cleanMessage = sanitizeInput(values.message);
+
+    const timestampStr = new Date().toISOString();
+    const auditHash = crypto
+      .createHash('sha256')
+      .update(`${cleanEmail}-${timestampStr}-${clientIp}`)
+      .digest('hex');
+
+    const contactDoc = {
       fullName: cleanFullName,
       email: cleanEmail,
       phone: cleanPhone,
       subject: cleanSubject,
       message: cleanMessage,
+      auditHash,
+      clientIpHash: crypto.createHash('sha256').update(clientIp).digest('hex'),
       createdAt: timestampStr
-    });
-    emailSent = result.sent;
-    if (result.error) emailError = result.error;
-    if (result.debug) emailDebug = result.debug;
-  } catch (emailErr: any) {
-    emailError = { unexpected: emailErr?.message || String(emailErr) };
-    console.error('[Vercel /api/contact] Unexpected email send error:', emailErr);
-  }
-
-  const isDev = process.env.NODE_ENV === 'development';
-
-  const userMessage = savedToFirestore
-    ? emailSent
-      ? "Thanks! Your message was received and I'll review it shortly."
-      : "Thanks! Your message was saved. However, the email notification could not be sent right now — I will still review the submission shortly."
-    : emailSent
-      ? "Thanks! Your message was received and I'll review it shortly."
-      : 'Thanks! Your message was submitted. If you do not hear back within 24 hours, please email me directly at alfonso.cperez08@gmail.com.';
-
-  const responseBody: any = {
-    success: true,
-    message: userMessage,
-    savedToFirestore,
-    emailSent
-  };
-
-  if (firestoreError) responseBody.firestoreError = firestoreError;
-  if (emailError) responseBody.emailError = isDev ? emailError : (typeof emailError === 'string' ? emailError : emailError?.message || 'Email send failed.');
-  if (isDev) {
-    responseBody.debug = {
-      email: emailDebug
     };
-  }
 
-  return json(res, 200, responseBody);
+    let savedToFirestore = false;
+    let firestoreError: string | null = firestoreInitError;
+    let emailSent = false;
+    let emailError: any = emailInitError ? { init: emailInitError } : undefined;
+    let emailDebug: any = undefined;
+
+    try {
+      const db = initFirestore();
+      if (db) {
+        const addPromise = db.collection('contacts').add({
+          ...contactDoc,
+          timestamp: FieldValue.serverTimestamp()
+        });
+        addPromise.catch((asyncErr: any) => {
+          console.error('[Vercel /api/contact] Firestore .add() async rejection caught after try/catch:', asyncErr?.message || asyncErr);
+        });
+        await addPromise;
+        savedToFirestore = true;
+      } else if (firestoreInitError) {
+        firestoreError = firestoreInitError;
+      }
+    } catch (dbErr: any) {
+      firestoreError = dbErr?.message || String(dbErr);
+      console.error('[Vercel /api/contact] Firestore save failed:', dbErr);
+    }
+
+    try {
+      const result = await sendContactNotificationEmail({
+        fullName: cleanFullName,
+        email: cleanEmail,
+        phone: cleanPhone,
+        subject: cleanSubject,
+        message: cleanMessage,
+        createdAt: timestampStr
+      });
+      emailSent = result.sent;
+      if (result.error) emailError = result.error;
+      if (result.debug) emailDebug = result.debug;
+    } catch (emailErr: any) {
+      emailError = { unexpected: emailErr?.message || String(emailErr) };
+      console.error('[Vercel /api/contact] Unexpected email send error:', emailErr);
+    }
+
+    const isDev = process.env.NODE_ENV === 'development';
+
+    const userMessage = savedToFirestore
+      ? emailSent
+        ? "Thanks! Your message was received and I'll review it shortly."
+        : "Thanks! Your message was saved. However, the email notification could not be sent right now — I will still review the submission shortly."
+      : emailSent
+        ? "Thanks! Your message was received and I'll review it shortly."
+        : 'Thanks! Your message was submitted. If you do not hear back within 24 hours, please email me directly at alfonso.cperez08@gmail.com.';
+
+    const responseBody: any = {
+      success: true,
+      message: userMessage,
+      savedToFirestore,
+      emailSent
+    };
+
+    if (firestoreError) responseBody.firestoreError = firestoreError;
+    if (emailError) responseBody.emailError = isDev ? emailError : (typeof emailError === 'string' ? emailError : emailError?.message || 'Email send failed.');
+    if (isDev) {
+      responseBody.debug = {
+        email: emailDebug
+      };
+    }
+
+    return json(res, 200, responseBody);
+  } catch (topErr: any) {
+    console.error('[Vercel /api/contact] TOP-LEVEL unexpected failure. Returning 500 safely instead of crashing.', topErr?.stack || topErr?.message || topErr);
+    return json(res, 500, {
+      success: false,
+      message: 'Unexpected server error. Please try again or email me directly at alfonso.cperez08@gmail.com.',
+      error: process.env.NODE_ENV === 'development' ? (topErr?.message || String(topErr)) : undefined
+    });
+  } finally {
+    try { clearTimeout(rejectionTimer); } catch {}
+  }
 }
