@@ -201,7 +201,6 @@ export default function App() {
           <HeroBanner
             currentTheme={currentTheme}
             isDarkMode={isDarkMode}
-            onOpenChat={() => setIsChatOpen(true)}
           />
 
           <LazySection placeholder={<div className="min-h-[520px] flex items-center justify-center text-white/40 text-sm">Loading projects…</div>}>
@@ -278,124 +277,39 @@ export default function App() {
         )}
 
         {/* Footer */}
-        <footer className="pt-14 pb-10 mt-8 border-t border-white/10 bg-[#0d0d0f]/60 backdrop-blur-xl relative z-10">
-          <div className="max-w-6xl mx-auto px-5 sm:px-8 lg:px-10 flex flex-col gap-10">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-              {/* Brand & Signature */}
-              <div className="space-y-4 sm:col-span-2">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-2xl flex items-center justify-center shadow-lg"
-                    style={{
-                      background: 'linear-gradient(135deg, #ff9500 0%, #ffb340 100%)',
-                    }}
-                  >
-                    <Code2 className="w-4.5 h-4.5 text-black" />
-                  </div>
-                  <div className="flex flex-col leading-tight">
-                    <span className="text-white font-semibold tracking-tight text-[15px]">
-                      Carlos Alfonso Perez
-                    </span>
-                    <span className="flex items-center gap-1.5 mt-0.5">
-                      <Briefcase className="w-3 h-3 text-[#ff9500]" />
-                      <span className="text-[11px] font-medium text-white/60 tracking-wide uppercase">
-                        Software Developer
-                      </span>
-                    </span>
-                  </div>
-                </div>
-                <p className="text-sm text-white/60 max-w-md leading-relaxed">
-                  Building thoughtful, performant web experiences. Cum Laude IT graduate from UST Manila with enterprise IT operations experience.
-                </p>
-                <motion.div
-                  whileHover={{ scale: 1.02, x: 2 }}
-                  className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-white/10 bg-white/[0.04] backdrop-blur-xl w-fit group cursor-pointer"
-                >
-                  <span className="relative flex h-2.5 w-2.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff9500] opacity-60" />
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#ff9500]" />
-                  </span>
-                  <span className="text-[12px] font-semibold text-white">
-                    Available for work
-                  </span>
-                </motion.div>
-              </div>
-
-              {/* Sitemap */}
-              <div className="space-y-3.5">
-                <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/45">Sitemap</h3>
-                <ul className="space-y-2 text-sm">
-                  {['Home', 'Projects', 'Skills', 'Experience', 'Education', 'Certifications', 'Contact'].map((item) => (
-                    <li key={item}>
-                      <a href={`#${item.toLowerCase()}`} className="text-white/70 hover:text-[#ff9500] transition-colors duration-200">
-                        {item}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Connect */}
-              <div className="space-y-3.5">
-                <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/45">Connect</h3>
-                <ul className="space-y-2 text-sm">
-                  <li>
-                    <a
-                      href={resumeData.contact.linkedin}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-white/70 hover:text-[#ff9500] transition-colors duration-200"
-                    >
-                      LinkedIn
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href={resumeData.contact.github}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-white/70 hover:text-[#ff9500] transition-colors duration-200"
-                    >
-                      GitHub
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href={`mailto:${resumeData.contact.email}`}
-                      className="text-white/70 hover:text-[#ff9500] transition-colors duration-200 break-all"
-                    >
-                      {resumeData.contact.email}
-                    </a>
-                  </li>
-                </ul>
-                <motion.button
-                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                  whileHover={{ y: -2 }}
-                  whileTap={{ scale: 0.94 }}
-                  className="mt-4 inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-white/10 bg-white/[0.04] text-white/80 hover:text-[#ff9500] hover:border-[#ff9500]/40 transition-colors text-sm font-medium"
-                  title="Scroll to Top"
-                >
-                  <ArrowUp className="w-4 h-4" />
-                  Back to top
-                </motion.button>
-              </div>
-            </div>
-
-            {/* Divider */}
-            <div className="h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
-
-            {/* Copyright + bottom row */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <p className="text-[12px] text-white/55 tracking-tight">
-                © 2026 Carlos Alfonso Perez. All rights reserved.
-              </p>
-              <div className="flex items-center gap-4 text-[11px] text-white/40">
-                <div className="flex items-center gap-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5 text-[#ff9500]" />
-                  <span>Privacy first</span>
-                </div>
-                <span>·</span>
-                <span>Handcrafted with React + Tailwind</span>
-              </div>
+        <footer className="py-8 mt-12 border-t border-white/10 bg-[#0d0d0f]/60 backdrop-blur-xl relative z-10">
+          <div className="max-w-6xl mx-auto px-5 sm:px-8 lg:px-10 flex flex-col items-center gap-3">
+            {/* Copyright */}
+            <p className="text-xs font-medium text-white/50 tracking-wide">
+              © 2026 Carlos Alfonso Perez. All rights reserved.
+            </p>
+            
+            {/* Social Links */}
+            <div className="flex items-center gap-4 text-xs font-medium">
+              <a
+                href={resumeData.contact.linkedin}
+                target="_blank"
+                rel="noreferrer"
+                className="text-white/50 hover:text-[#ff9500] transition-colors duration-200"
+              >
+                LinkedIn
+              </a>
+              <span className="text-white/20">·</span>
+              <a
+                href={resumeData.contact.github}
+                target="_blank"
+                rel="noreferrer"
+                className="text-white/50 hover:text-[#ff9500] transition-colors duration-200"
+              >
+                GitHub
+              </a>
+              <span className="text-white/20">·</span>
+              <a
+                href={`mailto:${resumeData.contact.email}`}
+                className="text-white/50 hover:text-[#ff9500] transition-colors duration-200"
+              >
+                Email
+              </a>
             </div>
           </div>
         </footer>

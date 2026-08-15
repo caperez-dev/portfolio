@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Download, Sparkles, ArrowRight, MapPin } from 'lucide-react';
+import { Download, ArrowRight, MapPin } from 'lucide-react';
 import { resumeData } from '../data/resume';
 import { generateResumePDF } from '../utils/pdfGenerator';
 import { ThemeOption } from '../types';
@@ -8,12 +8,11 @@ import { ThemeOption } from '../types';
 interface HeroBannerProps {
   currentTheme: ThemeOption;
   isDarkMode: boolean;
-  onOpenChat: () => void;
 }
 
 const TYPEWRITER_WORDS = ['Full-Stack Developer', 'Freelancer'];
 
-export function HeroBanner({ currentTheme, isDarkMode, onOpenChat }: HeroBannerProps) {
+export function HeroBanner({ currentTheme, isDarkMode }: HeroBannerProps) {
   const [wordIdx, setWordIdx] = useState(0);
   const [displayedText, setDisplayedText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
@@ -134,13 +133,6 @@ export function HeroBanner({ currentTheme, isDarkMode, onOpenChat }: HeroBannerP
             <span className="inline-block w-3 sm:w-4 h-[3px] bg-[#ff9500] animate-pulse ml-1 rounded-full self-end mb-1.5" />
           </motion.div>
 
-          <motion.h2
-            variants={itemVariants}
-            className="text-3xl sm:text-5xl lg:text-6xl font-extrabold font-outfit leading-tight bg-gradient-to-r from-white via-white to-[#ff9500] bg-clip-text text-transparent"
-            style={{ fontWeight: 900 }}
-          >
-            I build websites for you.
-          </motion.h2>
         </motion.div>
 
         <motion.p
@@ -207,15 +199,9 @@ export function HeroBanner({ currentTheme, isDarkMode, onOpenChat }: HeroBannerP
             <span>Download Resume</span>
           </button>
 
-          <button
-            onClick={onOpenChat}
-            className="px-5 py-3.5 rounded-2xl font-medium text-sm text-[#ff9500] border border-[#ff9500]/30 bg-[#ff9500]/10 hover:bg-[#ff9500]/18 transition-all duration-300 flex items-center gap-2"
-          >
-            <Sparkles className="w-4 h-4 text-[#ff9500] pulse-icon-3s" />
-            <span>Ask AI Assistant</span>
-          </button>
         </motion.div>
       </div>
     </section>
   );
 }
+

@@ -9,7 +9,7 @@ export function UstLogo({ className = 'w-full h-full' }: { className?: string })
       aria-label="University of Santo Tomas Logo"
     >
       {/* Black/Slate canvas */}
-      <rect width="200" height="200" rx="24" fill="#0F172A" />
+      <rect width="200" height="200" rx="24" fill="#141414" />
       
       {/* Outer Gold Shield Border */}
       <path
@@ -30,7 +30,7 @@ export function UstLogo({ className = 'w-full h-full' }: { className?: string })
       <text
         x="100"
         y="96"
-        fill="#0F172A"
+        fill="#FFFFFF"
         fontFamily="sans-serif"
         fontSize="16"
         fontWeight="900"

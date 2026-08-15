@@ -69,15 +69,15 @@ export function FloatingSidebar() {
         aria-label="Copy Email Address"
         className={`group relative p-3 rounded-full transition-all duration-300 shadow-lg hover:scale-110 active:scale-95 ${
           copied
-            ? 'bg-emerald-500/20 border border-emerald-500/60 text-emerald-400 shadow-emerald-500/20'
+            ? 'bg-[#ff9500]/20 border border-[#ff9500]/60 text-[#ff9500] shadow-[#ff9500]/20'
             : 'bg-[#1c1c1e] hover:bg-[#ff9500]/15 border border-[#ff9500]/30 text-white hover:text-[#ff9500] shadow-[#ff9500]/10'
         }`}
       >
-        {copied ? <Check className="w-5 h-5 text-emerald-400" /> : <Mail className="w-5 h-5" />}
+        {copied ? <Check className="w-5 h-5 text-[#ff9500]" /> : <Mail className="w-5 h-5" />}
         <span
           className={`absolute left-full ml-3 px-2.5 py-1 rounded-md text-[11px] font-medium whitespace-nowrap transition-all duration-200 pointer-events-none shadow-md border ${
             copied
-              ? 'opacity-100 bg-emerald-950 text-emerald-300 border-emerald-500/50 font-bold scale-105'
+              ? 'opacity-100 bg-slate-950 text-[#ffb340] border-[#ff9500]/50 font-bold scale-105'
               : 'opacity-0 group-hover:opacity-100 bg-slate-900 text-white border-slate-700'
           }`}
         >
@@ -89,3 +89,4 @@ export function FloatingSidebar() {
     </motion.div>
   );
 }
+

@@ -3,8 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { resumeData } from '../data/resume';
 import { ThemeOption } from '../types';
 import {
-  Code2,
-  Filter
+  Code2
 } from 'lucide-react';
 
 interface SkillsSectionProps {
@@ -73,18 +72,9 @@ function getSkillIcon(name: string, logoKey?: string) {
 }
 
 export function SkillsSection({ currentTheme, isDarkMode }: SkillsSectionProps) {
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
-
-  const categories = ['All', ...resumeData.skills.webDev.map((cat) => cat.category)];
-
   const allWebDevSkills = resumeData.skills.webDev.flatMap((cat) =>
     cat.skills.map((skill) => ({ ...skill, category: cat.category }))
   );
-
-  const displayedSkills =
-    selectedCategory === 'All'
-      ? allWebDevSkills
-      : allWebDevSkills.filter((skill) => skill.category === selectedCategory);
 
   return (
     <section id="skills" className="py-12 sm:py-16 border-t border-white/8 relative scroll-mt-16">
@@ -106,13 +96,11 @@ export function SkillsSection({ currentTheme, isDarkMode }: SkillsSectionProps) 
               isDarkMode ? currentTheme.darkText : currentTheme.lightText
             }`}
           >
-            Skills
+            Technologies
           </h2>
         </motion.div>
 
-        {/* =========================================================================
-            SECTION 1: SKILLS (CONSOLIDATED IN 1 BOX WITH FILTERING)
-           ========================================================================= */}
+        {/* Skills Box */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -120,11 +108,6 @@ export function SkillsSection({ currentTheme, isDarkMode }: SkillsSectionProps) 
           transition={{ duration: 0.7, ease: 'easeOut' }}
           className="mb-10"
         >
-          <div className="flex items-center gap-2 text-[#ff9500] text-lg font-bold mb-4 pb-2 bg-[#ff9500]/12 border-b border-[#ff9500]/20 px-3 rounded-lg">
-            <Code2 className="w-5 h-5 text-[#ff9500]" />
-            <span>Skills</span>
-          </div>
-
           {/* Single Box Container */}
           <motion.div
             layout
@@ -146,55 +129,15 @@ export function SkillsSection({ currentTheme, isDarkMode }: SkillsSectionProps) 
                 opacity: isDarkMode ? 0.06 : 0.04
               }}
             />
-            {/* Filter Buttons Header */}
-            <div className="flex flex-wrap items-center gap-2 mb-6 pb-4 border-b border-slate-800/80">
-              <span className="text-xs font-mono font-medium text-slate-400 mr-1 flex items-center gap-1.5 shrink-0">
-                <Filter className="w-3.5 h-3.5 text-cyan-400" /> Filter:
-              </span>
-              {categories.map((cat) => {
-                const isSelected = selectedCategory === cat;
-                const count =
-                  cat === 'All'
-                    ? allWebDevSkills.length
-                    : resumeData.skills.webDev.find((c) => c.category === cat)?.skills.length;
 
-                return (
-                  <button
-                    key={cat}
-                    onClick={() => setSelectedCategory(cat)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all duration-200 flex items-center gap-1.5 ${
-                      isSelected
-                        ? 'bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/20 font-bold scale-105'
-                        : isDarkMode
-                        ? 'bg-slate-900 border border-slate-800 text-slate-300 hover:border-cyan-500/40 hover:text-cyan-300'
-                        : 'bg-slate-100 border border-slate-200 text-slate-700 hover:border-cyan-500/40 hover:text-cyan-600'
-                    }`}
-                  >
-                    <span>{cat}</span>
-                    <span
-                      className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                        isSelected
-                          ? 'bg-slate-950/20 text-slate-950'
-                          : isDarkMode
-                          ? 'bg-slate-800 text-slate-400'
-                          : 'bg-slate-200 text-slate-600'
-                      }`}
-                    >
-                      {count}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Grid of Filtered Technologies */}
+            {/* Grid of Technologies */}
             <motion.div
               layout
               transition={{ layout: { duration: 0.3, ease: 'easeInOut' } }}
               className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5"
             >
               <AnimatePresence mode="popLayout" initial={false}>
-                {displayedSkills.map((skill) => (
+                {allWebDevSkills.map((skill) => (
                   <motion.div
                     key={skill.name}
                     layout
@@ -208,14 +151,14 @@ export function SkillsSection({ currentTheme, isDarkMode }: SkillsSectionProps) 
                     }}
                     className={`flex flex-col items-center justify-center p-3.5 rounded-xl border transition-colors text-center gap-2 group ${
                       isDarkMode
-                        ? 'bg-slate-900/90 border-slate-800 hover:border-cyan-500/50 hover:bg-slate-800/90 hover:shadow-lg hover:shadow-cyan-950/30'
-                        : 'bg-slate-100 border border-slate-200 hover:border-cyan-500/50 hover:bg-slate-200'
+                        ? 'bg-[#1c1c1e]/80 border-white/10 hover:border-[#ff9500]/50 hover:bg-[#1c1c1e] hover:shadow-lg hover:shadow-[#ff9500]/20'
+                        : 'bg-white/5 border border-white/10 hover:border-[#ff9500]/50 hover:bg-white/10'
                     }`}
                   >
-                    <div className="w-10 aspect-square flex items-center justify-center rounded-2xl overflow-hidden transition-transform duration-200 group-hover:scale-110 bg-slate-950/5 dark:bg-white/5">
+                    <div className="w-10 aspect-square flex items-center justify-center rounded-2xl overflow-hidden transition-transform duration-200 group-hover:scale-110 bg-white/[0.04]">
                       {getSkillIcon(skill.name, skill.logoKey)}
                     </div>
-                    <span className="text-xs font-semibold text-slate-200 group-hover:text-cyan-300 transition-colors leading-tight text-center">
+                    <span className="text-xs font-semibold text-white/70 group-hover:text-[#ffb340] transition-colors leading-tight text-center">
                       {skill.name}
                     </span>
                   </motion.div>
@@ -228,3 +171,5 @@ export function SkillsSection({ currentTheme, isDarkMode }: SkillsSectionProps) 
     </section>
   );
 }
+
+

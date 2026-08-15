@@ -59,7 +59,7 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
             <div className="flex gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
               <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
+              <span className="w-2.5 h-2.5 rounded-full bg-[#ff9500]/80" />
             </div>
           </div>
 
@@ -109,3 +109,4 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
     </AnimatePresence>
   );
 }
+

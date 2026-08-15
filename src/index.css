@@ -48,7 +48,7 @@ section {
 
 ::selection {
   background: var(--accent);
-  color: #0b0b0d;
+  color: #ffffff;
 }
 
 /* Apple-like custom scrollbars */

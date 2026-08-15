@@ -19,7 +19,7 @@ export function SummarySection({ currentTheme, isDarkMode }: SummarySectionProps
           viewport={{ once: true }}
           className="mb-10 text-left"
         >
-          <div className="flex items-center gap-2 text-cyan-400 font-mono text-xs font-semibold uppercase tracking-wider mb-2">
+          <div className="flex items-center gap-2 text-[#ff9500] font-mono text-xs font-semibold uppercase tracking-wider mb-2">
             <GraduationCap className="w-4 h-4" />
             <span>01 // Professional Profile</span>
           </div>
@@ -54,7 +54,7 @@ export function SummarySection({ currentTheme, isDarkMode }: SummarySectionProps
 
             <div className="mt-8 pt-6 border-t border-slate-700/40 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-cyan-500/15 text-cyan-400">
+                <div className="p-2 rounded-lg bg-[#ff9500]/15 text-[#ff9500]">
                   <Award className="w-5 h-5" />
                 </div>
                 <div>
@@ -64,7 +64,7 @@ export function SummarySection({ currentTheme, isDarkMode }: SummarySectionProps
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-indigo-500/15 text-indigo-400">
+                <div className="p-2 rounded-lg bg-[#ff9500]/15 text-[#ff9500]">
                   <Server className="w-5 h-5" />
                 </div>
                 <div>
@@ -89,7 +89,7 @@ export function SummarySection({ currentTheme, isDarkMode }: SummarySectionProps
                   : 'bg-white border-slate-200 shadow-sm'
               }`}
             >
-              <div className="flex items-center gap-2 text-cyan-400 font-semibold text-sm mb-2">
+              <div className="flex items-center gap-2 text-[#ff9500] font-semibold text-sm mb-2">
                 <Server className="w-4 h-4" />
                 <span>IT Operations & Deployment</span>
               </div>
@@ -105,7 +105,7 @@ export function SummarySection({ currentTheme, isDarkMode }: SummarySectionProps
                   : 'bg-white border-slate-200 shadow-sm'
               }`}
             >
-              <div className="flex items-center gap-2 text-indigo-400 font-semibold text-sm mb-2">
+              <div className="flex items-center gap-2 text-[#ff9500] font-semibold text-sm mb-2">
                 <Code className="w-4 h-4" />
                 <span>Full-Stack Web Engineering</span>
               </div>
@@ -121,7 +121,7 @@ export function SummarySection({ currentTheme, isDarkMode }: SummarySectionProps
                   : 'bg-white border-slate-200 shadow-sm'
               }`}
             >
-              <div className="flex items-center gap-2 text-emerald-400 font-semibold text-sm mb-2">
+              <div className="flex items-center gap-2 text-[#ff9500] font-semibold text-sm mb-2">
                 <ShieldCheck className="w-4 h-4" />
                 <span>QA & Security Mindset</span>
               </div>
@@ -135,3 +135,5 @@ export function SummarySection({ currentTheme, isDarkMode }: SummarySectionProps
     </section>
   );
 }
+
+

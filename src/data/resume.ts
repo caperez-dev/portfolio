@@ -167,11 +167,10 @@ export const resumeData: ResumeData = {
     {
       id: "quizzle",
       title: "Quizzle: An AI-driven Web App for Personalized Online Learning",
-      subtitle: "Capstone Project",
-      category: "capstone",
-      technologies: ["React.js", "Firebase Firestore", "Node.js", "Express.js", "Hostinger", "Web Sockets (Socket.io)", "LLaMA 3.3 70B"],
+      subtitle: "Web Application",
+      category: "web",
+      technologies: ["React.js", "Firebase Firestore", "Node.js", "Express.js", "Web Sockets (Socket.io)", "LLaMA 3.3 70B"],
       role: "Project Manager, UI/UX Design, Backend Development, System Documentation",
-      hosting: "Hostinger (VPS)",
       description: [
         "Managed a 4-member Agile team to plan and build the platform.",
         "Led UI/UX design and created 100+ system diagrams including use-case, activity, and ERD diagrams.",
@@ -185,11 +184,10 @@ export const resumeData: ResumeData = {
     {
       id: "paramdam",
       title: "Order Processing System & Attendance Monitoring for Paramdam Café",
-      subtitle: "Software Engineering Project",
+      subtitle: "Web Application",
       category: "web",
-      technologies: ["HTML", "Bootstrap CSS", "JavaScript", "PHP", "MySQL Database", "Hostinger"],
+      technologies: ["HTML", "Bootstrap CSS", "JavaScript", "PHP", "MySQL Database"],
       role: "UI/UX Design, Backend Development, System Documentation",
-      hosting: "Hostinger",
       description: [
         "Executed complete development lifecycle from front-end to back-end.",
         "Designed 10+ system diagrams and executed 50 test cases.",
@@ -205,9 +203,8 @@ export const resumeData: ResumeData = {
       title: "CICSelect: Secure Online Voting System",
       subtitle: "Web Application",
       category: "web",
-      technologies: ["HTML", "Bootstrap", "PHP Laravel Framework", "MySQL Database", "InfinityFree"],
+      technologies: ["HTML", "Bootstrap", "PHP Laravel Framework", "MySQL Database"],
       role: "UI/UX Design, Backend Development, System Documentation",
-      hosting: "InfinityFree",
       description: [
         "Developed a secure online voting platform using PHP Laravel and MySQL.",
         "Implemented user authentication and vote validation logic.",

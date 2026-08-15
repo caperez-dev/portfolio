@@ -120,8 +120,8 @@ export function AIChatAssistant({
           isExpanded ? 'w-[95vw] md:w-[600px] h-[80vh]' : 'w-[92vw] sm:w-[400px] h-[560px]'
         } ${
           isDarkMode
-            ? 'bg-slate-900 border-slate-700 text-slate-100 shadow-[#ff9500]/40'
-            : 'bg-white border-slate-200 text-slate-900 shadow-slate-400/30'
+            ? 'bg-[#141414] border-white/10 text-white shadow-[#ff9500]/40'
+            : 'bg-white border-white/10 text-white shadow-[#ff9500]/30'
         }`}
       >
         {/* Header */}
@@ -158,7 +158,7 @@ export function AIChatAssistant({
 
         {/* Message Stream */}
         <div className={`flex-1 p-4 overflow-y-auto space-y-3.5 text-xs font-sans chat-scrollbar ${
-          isDarkMode ? 'bg-slate-900' : 'bg-white'
+          isDarkMode ? 'bg-[#141414]' : 'bg-white'
         }`}>
           {messages.map((msg) => (
             <div
@@ -182,8 +182,8 @@ export function AIChatAssistant({
                   msg.sender === 'user'
                     ? 'bg-[#ff9500] text-black rounded-tr-none'
                     : isDarkMode
-                    ? 'bg-white/[0.05] text-white border border-white/10 rounded-tl-none'
-                    : 'bg-slate-100 text-slate-800 border border-slate-200 rounded-tl-none'
+                    ? 'bg-[#1c1c1e] text-white border border-white/10 rounded-tl-none'
+                    : 'bg-white text-slate-800 border border-white/10 rounded-tl-none'
                 }`}
               >
                 <div className={`chat-markdown prose-sm ${
@@ -222,12 +222,12 @@ export function AIChatAssistant({
                         h3: ({ children }) => <h3 className="text-xs font-semibold mb-1 mt-1">{children}</h3>,
                         code: ({ children }) => (
                           <code className={`px-1.5 py-0.5 rounded text-[10px] font-mono ${
-                            isDarkMode ? 'bg-slate-900 text-[#ff9500]' : 'bg-slate-200 text-[#ff9500]'
+                            isDarkMode ? 'bg-[#0d0d0f] text-[#ff9500]' : 'bg-white/10 text-[#ff9500]'
                           }`}>{children}</code>
                         ),
                         blockquote: ({ children }) => (
                           <blockquote className={`border-l-2 pl-3 italic my-1 ${
-                            isDarkMode ? 'border-slate-600 text-slate-400' : 'border-slate-300 text-slate-600'
+                            isDarkMode ? 'border-white/20 text-white/60' : 'border-white/20 text-white/60'
                           }`}>{children}</blockquote>
                         )
                       }}
@@ -268,8 +268,8 @@ export function AIChatAssistant({
         {/* Sample Prompt Chips */}
         <div className={`px-3 py-2 border-t flex flex-wrap gap-1.5 overflow-x-auto chips-scrollbar ${
           isDarkMode
-            ? 'border-slate-800/60 bg-slate-950/40'
-            : 'border-slate-200 bg-slate-50'
+            ? 'border-white/10 bg-[#0d0d0f]'
+            : 'border-white/10 bg-white'
         }`}>
           {samplePrompts.map((prompt) => (
             <button
@@ -289,8 +289,8 @@ export function AIChatAssistant({
         {/* Powered By Attribution */}
         <div className={`px-3 py-1 text-center text-[9px] font-mono border-t ${
           isDarkMode
-            ? 'text-slate-500 border-slate-800 bg-slate-950/60'
-            : 'text-slate-400 border-slate-200 bg-slate-50'
+            ? 'text-white/40 border-white/10 bg-[#0d0d0f]'
+            : 'text-white/40 border-white/10 bg-white'
         }`}>
           ✨ Powered by Google Gemini AI
         </div>
@@ -302,7 +302,7 @@ export function AIChatAssistant({
             handleSendMessage();
           }}
           className={`p-3 border-t flex items-center gap-2 ${
-            isDarkMode ? 'border-slate-800 bg-slate-900' : 'border-slate-200 bg-white'
+            isDarkMode ? 'border-white/10 bg-[#141414]' : 'border-white/10 bg-white'
           }`}
         >
           <input
@@ -311,7 +311,7 @@ export function AIChatAssistant({
             onChange={(e) => setInputText(e.target.value)}
             placeholder="Ask anything about Carlos..."
             className={`flex-1 px-3 py-2 rounded-xl text-xs border focus:outline-none focus:border-[#ff9500] transition-colors ${
-              isDarkMode ? 'bg-slate-800 text-white border-slate-700 placeholder-slate-500' : 'bg-slate-50 text-slate-900 border-slate-300 placeholder-slate-400'
+              isDarkMode ? 'bg-[#1c1c1e] text-white border-white/10 placeholder-white/40' : 'bg-white/90 text-white border-white/10 placeholder-white/40'
             }`}
           />
           <button
@@ -326,3 +326,4 @@ export function AIChatAssistant({
     </AnimatePresence>
   );
 }
+

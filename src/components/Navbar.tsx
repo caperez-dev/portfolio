@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
-  Download,
+  Paperclip,
   Menu,
   X
 } from 'lucide-react';
@@ -26,7 +26,6 @@ export function Navbar({
     { name: 'Projects', href: '#projects' },
     { name: 'Skills', href: '#skills' },
     { name: 'Experience', href: '#experience' },
-    { name: 'Education', href: '#education' },
     { name: 'Certifications', href: '#certifications' },
     { name: 'Contact', href: '#contact' }
   ];
@@ -42,9 +41,13 @@ export function Navbar({
   return (
     <header
       id="main-navbar"
-      className="fixed top-0 left-0 right-0 z-40 bg-[rgba(20,20,20,0.72)] backdrop-blur-2xl border-b border-white/8"
+      className="fixed top-4 sm:top-6 left-4 sm:left-6 right-4 sm:right-6 z-40 rounded-2xl backdrop-blur-2xl border border-white/10 shadow-2xl shadow-black/40"
+      style={{
+        background: 'rgba(20, 20, 20, 0.85)',
+        backdropFilter: 'blur(20px)'
+      }}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div className="px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand */}
         <a
           href="#home"
@@ -52,26 +55,14 @@ export function Navbar({
             e.preventDefault();
             handleNavClick('#home');
           }}
-          className="flex items-center gap-3 group py-1"
+          className="flex items-center gap-1 group py-1"
           id="navbar-brand-link"
         >
-          <div className="flex flex-col">
-            <span className="font-bold text-base sm:text-lg tracking-tight leading-snug text-white">
-              Carlos Alfonso Perez
-            </span>
-            <span className="text-[11px] text-[#ff9500] font-mono font-medium tracking-wide">
-              Full-stack Developer | Freelancer
-            </span>
-          </div>
-          <div className="hidden md:flex items-center rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 gap-1.5">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff9500] opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ff9500]"></span>
-            </span>
-            <span className="text-[12px] uppercase tracking-wider font-semibold text-white/80">
-              Available for work
-            </span>
-          </div>
+          <img
+            src="https://via.placeholder.com/40/ff9500/ffffff?text=CA"
+            alt="Profile"
+            className="w-10 h-10 rounded-full object-cover"
+          />
         </a>
 
         {/* Desktop Nav Links */}
@@ -113,7 +104,7 @@ export function Navbar({
         </nav>
 
         {/* Controls: Download CV, Theme Selector */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           {/* Download CV Button */}
           <button
             onClick={generateResumePDF}
@@ -124,7 +115,7 @@ export function Navbar({
             }}
             title="Download Resume PDF"
           >
-            <Download className="w-3.5 h-3.5" />
+            <Paperclip className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Download CV</span>
           </button>
 
@@ -146,7 +137,10 @@ export function Navbar({
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="xl:hidden bg-[#141414] border-b border-white/8 px-4 py-3 space-y-1"
+            className="xl:hidden border-t border-white/8 px-4 py-3 space-y-1"
+            style={{
+              background: 'rgba(20, 20, 20, 0.4)'
+            }}
           >
             {navLinks.map((link) => (
               <a
@@ -168,3 +162,4 @@ export function Navbar({
     </header>
   );
 }
+

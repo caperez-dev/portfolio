@@ -1,18 +1,15 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { resumeData } from '../data/resume';
 import { ThemeOption } from '../types';
 import {
   FolderGit2,
-  Server,
+  ChevronLeft,
+  ChevronRight,
   Globe,
   Smartphone,
   Sparkles,
-  ChevronDown,
-  ChevronUp,
-  Maximize2,
-  X,
-  Image as ImageIcon
+  Server
 } from 'lucide-react';
 
 interface ProjectsSectionProps {
@@ -20,263 +17,263 @@ interface ProjectsSectionProps {
   isDarkMode: boolean;
 }
 
-export function ProjectsSection({ currentTheme, isDarkMode }: ProjectsSectionProps) {
-  const [filter, setFilter] = useState<'all' | 'capstone' | 'web' | 'mobile' | 'system'>('all');
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [activeModalImg, setActiveModalImg] = useState<{ src: string; title: string; index: number } | null>(null);
+interface ProjectCardProps {
+  project: typeof resumeData.projects[0];
+  isCenter: boolean;
+  position: number;
+  maxVisible: number;
+  onClick: () => void;
+}
 
-  const categories = [
-    { id: 'all', label: 'All Projects' },
-    { id: 'capstone', label: 'Capstone Project' },
-    { id: 'web', label: 'Web Applications' },
-    { id: 'mobile', label: 'Mobile Apps' }
-  ];
+function ProjectCard({ project, isCenter, position, maxVisible, onClick }: ProjectCardProps) {
+  // Calculate distance from center
+  const distance = Math.abs(position);
+  
+  // Calculate transforms based on position
+  const getScale = () => {
+    if (distance === 0) return 1;
+    if (distance === 1) return 0.7;
+    if (distance === 2) return 0.5;
+    return 0.35;
+  };
 
-  // Filtering logic:
-  // If filter is 'all' and not expanded, showcase Quizzle and Paramdam Cafe first.
-  const allFiltered =
-    filter === 'all'
-      ? resumeData.projects
-      : resumeData.projects.filter((p) => p.category === filter);
+  const getOpacity = () => {
+    if (distance === 0) return 1;
+    if (distance === 1) return 0.6;
+    if (distance === 2) return 0.3;
+    return 0.1;
+  };
 
-  const displayedProjects =
-    filter === 'all' && !isExpanded
-      ? resumeData.projects.filter((p) => p.id === 'quizzle' || p.id === 'paramdam')
-      : allFiltered;
+  const getRotateY = () => {
+    if (position === 0) return 0;
+    return position > 0 ? -25 : 25;
+  };
 
-  const hiddenCount = resumeData.projects.length - 2;
+  const getTranslateX = () => {
+    if (position === 0) return 0;
+    const baseOffset = 280;
+    return position > 0 ? baseOffset * position * 0.6 : baseOffset * position * 0.6;
+  };
+
+  const scale = getScale();
+  const opacity = getOpacity();
+  const rotateY = getRotateY();
+  const translateX = getTranslateX();
 
   return (
-    <section id="projects" className="py-12 sm:py-16 border-t border-white/8 relative scroll-mt-16">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <motion.div
+      onClick={onClick}
+      className={`absolute w-96 flex-shrink-0 cursor-pointer transition-all ${
+        !isCenter ? 'pointer-events-auto' : ''
+      }`}
+      style={{
+        perspective: '1200px',
+        left: '50%',
+        marginLeft: '-192px'
+      }}
+      animate={{
+        scale,
+        opacity,
+        x: translateX,
+        rotateY,
+        zIndex: Math.max(0, 10 - distance)
+      }}
+      transition={{
+        duration: 0.5,
+        ease: 'easeInOut'
+      }}
+    >
+      <div
+        className={`bg-[#1c1c1e]/80 backdrop-blur-xl rounded-2xl border overflow-hidden shadow-2xl h-full flex flex-col ${
+          isCenter ? 'border-[#ff9500]/50 shadow-[#ff9500]/20' : 'border-white/10'
+        }`}
+      >
+        {/* Project Image */}
+        {project.images && project.images.length > 0 && (
+          <div className="relative w-full aspect-video overflow-hidden bg-slate-950/60">
+            <img
+              src={project.images[0]}
+              alt={project.title}
+              referrerPolicy="no-referrer"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#1c1c1e]/80" />
+          </div>
+        )}
+
+        {/* Project Info */}
+        <div className="p-6 flex flex-col flex-grow">
+          {/* Category Badge */}
+          <div className="mb-3 flex items-center gap-1">
+            <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider bg-[#ff9500]/12 text-[#ff9500] border border-[#ff9500]/30 flex items-center gap-1 w-fit">
+              {project.category === 'capstone' && <Sparkles className="w-3 h-3" />}
+              {project.category === 'web' && <Globe className="w-3 h-3" />}
+              {project.category === 'mobile' && <Smartphone className="w-3 h-3" />}
+              {project.category === 'system' && <Server className="w-3 h-3" />}
+              <span>{project.subtitle}</span>
+            </span>
+          </div>
+
+          {/* Title */}
+          <h3 className="text-lg font-bold text-white mb-2 line-clamp-2">
+            {project.title}
+          </h3>
+
+          {/* Description Preview */}
+          <p className="text-xs text-white/60 mb-4 line-clamp-2">
+            {project.description[0]}
+          </p>
+
+          {/* Tech Stack */}
+          <div className="flex flex-wrap gap-1.5">
+            {project.technologies.slice(0, 3).map((tech) => (
+              <span
+                key={tech}
+                className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-white/[0.05] border border-white/10 text-white/70"
+              >
+                {tech}
+              </span>
+            ))}
+            {project.technologies.length > 3 && (
+              <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold text-white/50">
+                +{project.technologies.length - 3}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+export function ProjectsSection({ currentTheme, isDarkMode }: ProjectsSectionProps) {
+  const projects = resumeData.projects;
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const maxVisible = 5; // Number of cards to show (left + center + right + buffer)
+
+  const handlePrev = () => {
+    setCurrentIndex((prev) => (prev === 0 ? projects.length - 1 : prev - 1));
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev === projects.length - 1 ? 0 : prev + 1));
+  };
+
+  const handleDotClick = (index: number) => {
+    setCurrentIndex(index);
+  };
+
+  // Calculate which projects to display and their positions
+  const getProjectPosition = (index: number) => {
+    const diff = index - currentIndex;
+    // Wrap around for circular carousel
+    if (diff > projects.length / 2) {
+      return diff - projects.length;
+    } else if (diff < -projects.length / 2) {
+      return diff + projects.length;
+    }
+    return diff;
+  };
+
+  return (
+    <section id="projects" className="py-16 sm:py-24 border-t border-white/8 relative scroll-mt-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.7, ease: 'easeOut' }}
-          className="mb-8 text-left"
+          className="mb-16 text-center"
         >
-          <div className="flex items-center gap-2 text-[#ff9500] text-xs font-semibold uppercase tracking-wide mb-2">
-            <FolderGit2 className="w-4 h-4 text-[#ff9500]" />
-            <span>01 // Projects</span>
+          <div className="flex items-center justify-center gap-2 text-[#ff9500] text-xs font-semibold uppercase tracking-wide mb-3">
+            <FolderGit2 className="w-4 h-4" />
+            <span>01 // Featured Projects</span>
           </div>
-          <h2
-            className={`text-3xl sm:text-4xl font-extrabold tracking-tight ${
-              isDarkMode ? currentTheme.darkText : currentTheme.lightText
-            }`}
-          >
-            Featured Software Projects
+          <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white">
+            Scroll Through My Work
           </h2>
         </motion.div>
 
-        {/* Category Filters */}
-        <div className="flex flex-wrap gap-2 mb-8">
-          {categories.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => {
-                setFilter(cat.id as any);
-                if (cat.id !== 'all') {
-                  setIsExpanded(true);
-                }
+        {/* Coverflow Carousel Container */}
+        <div className="relative flex justify-center">
+          {/* Carousel */}
+          <div className="relative w-full h-[600px] flex items-center justify-center">
+            {/* 3D Perspective Container */}
+            <div
+              style={{
+                perspective: '1500px',
+                width: '100%',
+                height: '100%',
+                position: 'relative'
               }}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all ${
-                filter === cat.id
-                  ? 'bg-[#ff9500] text-black font-bold shadow shadow-[#ff9500]/20'
-                  : isDarkMode
-                  ? 'bg-white/[0.04] border border-white/10 text-white/70 hover:border-[#ff9500]/30 hover:text-white'
-                  : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900'
-              }`}
             >
-              {cat.label}
-            </button>
+              {/* Projects Track */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                {projects.map((project, idx) => {
+                  const position = getProjectPosition(idx);
+                  const isVisible = Math.abs(position) <= 2;
+
+                  if (!isVisible) return null;
+
+                  return (
+                    <ProjectCard
+                      key={project.id}
+                      project={project}
+                      isCenter={position === 0}
+                      position={position}
+                      maxVisible={maxVisible}
+                      onClick={() => {
+                        if (position !== 0) {
+                          handleDotClick(idx);
+                        }
+                      }}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Left Arrow */}
+            <motion.button
+              onClick={handlePrev}
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/10 hover:bg-[#ff9500]/30 text-white hover:text-[#ff9500] border border-white/20 hover:border-[#ff9500]/50 transition-all group -translate-x-20 lg:-translate-x-12"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </motion.button>
+
+            {/* Right Arrow */}
+            <motion.button
+              onClick={handleNext}
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/10 hover:bg-[#ff9500]/30 text-white hover:text-[#ff9500] border border-white/20 hover:border-[#ff9500]/50 transition-all group translate-x-20 lg:translate-x-12"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <ChevronRight className="w-6 h-6" />
+            </motion.button>
+          </div>
+        </div>
+
+        {/* Dot Indicators */}
+        <div className="mt-12 flex justify-center gap-2">
+          {projects.map((_, idx) => (
+            <motion.button
+              key={idx}
+              onClick={() => handleDotClick(idx)}
+              className={`rounded-full transition-all ${
+                idx === currentIndex
+                  ? 'bg-[#ff9500] shadow-lg shadow-[#ff9500]/50 w-3 h-3'
+                  : 'bg-white/20 hover:bg-white/40 w-2 h-2'
+              }`}
+              whileHover={{ scale: 1.2 }}
+              whileTap={{ scale: 0.9 }}
+            />
           ))}
         </div>
-
-        {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <AnimatePresence mode="popLayout">
-            {displayedProjects.map((proj, idx) => (
-              <motion.div
-                key={proj.id}
-                layout
-                initial={{ opacity: 0, y: 30, scale: 0.96 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.5, delay: idx * 0.08, ease: 'easeOut' }}
-                className={`p-6 rounded-2xl border shadow-xl flex flex-col justify-between transition-all hover:border-[#ff9500]/40 ${
-                  isDarkMode
-                    ? 'bg-[#1c1c1e]/70 backdrop-blur-xl border-white/10'
-                    : `${currentTheme.lightCard} ${currentTheme.lightBorder}`
-                }`}
-              >
-                <div>
-                  {/* Category & Badge */}
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider bg-[#ff9500]/12 text-[#ff9500] border border-[#ff9500]/30 flex items-center gap-1">
-                      {proj.category === 'capstone' && <Sparkles className="w-3 h-3 text-[#ff9500]" />}
-                      {proj.category === 'web' && <Globe className="w-3 h-3 text-indigo-400" />}
-                      {proj.category === 'mobile' && <Smartphone className="w-3 h-3 text-emerald-400" />}
-                      {proj.category === 'system' && <Server className="w-3 h-3 text-yellow-400" />}
-                      <span>{proj.subtitle}</span>
-                    </span>
-
-                    {proj.hosting && (
-                      <span className="text-[10px] font-mono text-white/55 flex items-center gap-1">
-                        <Server className="w-3 h-3 text-[#ff9500]" /> Host: {proj.hosting}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Title */}
-                  <h3 className="text-lg font-bold text-white mb-4 leading-snug">
-                    {proj.title}
-                  </h3>
-
-                  {/* Screenshots Showcase (Overlapping 2 Screenshots per project) */}
-                  {proj.images && proj.images.length > 0 && (
-                    <div className="mb-5">
-                      {/* Overlapping Photos Stack */}
-                      <div className="relative h-44 sm:h-48 w-full rounded-2xl bg-slate-950/60 border border-slate-800/80 p-2 overflow-hidden flex items-center justify-center">
-                        {proj.images.slice(0, 2).map((imgUrl, imgIdx) => {
-                          const isFirst = imgIdx === 0;
-                          return (
-                            <div
-                              key={imgIdx}
-                              onClick={() =>
-                                setActiveModalImg({
-                                  src: imgUrl,
-                                  title: `${proj.title} (Screenshot ${imgIdx + 1})`,
-                                  index: imgIdx + 1
-                                })
-                              }
-                              className={`absolute w-[68%] aspect-video rounded-xl overflow-hidden border border-slate-700/90 bg-slate-900 cursor-pointer transition-all duration-300 group ${
-                                isFirst
-                                  ? 'top-2.5 left-2.5 z-10 -rotate-1 hover:rotate-0 hover:z-30 shadow-xl shadow-black/70 hover:scale-105 hover:border-[#ff9500]/40'
-                                  : 'bottom-2.5 right-2.5 z-20 rotate-1 hover:rotate-0 hover:z-30 shadow-2xl shadow-black/90 hover:scale-105 hover:border-[#ff9500]/40 ring-1 ring-slate-800'
-                              }`}
-                            >
-                              <img
-                                src={imgUrl}
-                                alt={`${proj.title} Screenshot ${imgIdx + 1}`}
-                                referrerPolicy="no-referrer"
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                              />
-                              {/* Overlay Hover Button */}
-                              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-end p-2">
-                                <div className="p-1 rounded-md bg-white/[0.04] border border-white/10 text-white">
-                                  <Maximize2 className="w-3 h-3" />
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Bullets */}
-                  <ul className="space-y-2 mb-6 text-xs text-slate-300 leading-relaxed">
-                    {proj.description.map((desc, dIdx) => (
-                      <li key={dIdx} className="flex items-start gap-2">
-                        <span className="text-[#ff9500] font-bold">•</span>
-                        <span>{desc}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Tech Tags */}
-                <div className="pt-4 border-t border-slate-700/40 flex flex-wrap gap-1.5">
-                  {proj.technologies.map((tech) => (
-                    <span
-                      key={tech}
-                      className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-900 border border-slate-800 text-slate-100"
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
-
-        {/* Show More / Show Less Toggle Button (Visible when on 'All Projects' filter) */}
-        {filter === 'all' && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="mt-10 text-center"
-          >
-            <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#ff9500] to-[#ffb340] text-black font-bold text-xs uppercase tracking-wider transition-all shadow-lg hover:shadow-[#ff9500]/10 inline-flex items-center gap-2 cursor-pointer"
-            >
-              <span>
-                {isExpanded
-                  ? 'Show Less Projects'
-                  : `Show More Projects (${hiddenCount} More)`}
-              </span>
-              {isExpanded ? (
-                <ChevronUp className="w-4 h-4 text-white" />
-              ) : (
-                <ChevronDown className="w-4 h-4 text-white" />
-              )}
-            </button>
-          </motion.div>
-        )}
       </div>
-
-      {/* Lightbox / Screenshot Modal */}
-      <AnimatePresence>
-        {activeModalImg && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setActiveModalImg(null)}
-            className="fixed inset-0 z-50 bg-[#141414]/90 backdrop-blur-xl flex items-center justify-center p-4 sm:p-6"
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-[#141414]/90 backdrop-blur-xl border border-white/10 rounded-2xl p-4 sm:p-6 max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl relative"
-            >
-              <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/10">
-                <div className="flex items-center gap-2">
-                  <ImageIcon className="w-4 h-4 text-[#ff9500]" />
-                  <h4 className="text-sm font-bold text-white">
-                    {activeModalImg.title}
-                  </h4>
-                </div>
-                <button
-                  onClick={() => setActiveModalImg(null)}
-                  className="p-1.5 rounded-lg bg-white/[0.04] border border-white/10 hover:bg-white/[0.08] text-white/70 hover:text-white transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div className="relative flex-1 overflow-hidden rounded-xl border border-white/10 bg-[#1c1c1e] flex items-center justify-center">
-                <img
-                  src={activeModalImg.src}
-                  alt={activeModalImg.title}
-                  referrerPolicy="no-referrer"
-                  className="max-h-[70vh] w-auto object-contain rounded-lg shadow-xl"
-                />
-              </div>
-
-              <div className="pt-3 text-center text-xs font-mono text-white/55">
-                Click anywhere outside or press top-right X to close
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </section>
   );
 }
+

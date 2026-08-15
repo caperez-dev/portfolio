@@ -91,3 +91,4 @@ export function EducationSection({ currentTheme, isDarkMode }: EducationSectionP
     </section>
   );
 }
+

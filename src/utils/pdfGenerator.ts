@@ -16,7 +16,7 @@ export function generateResumePDF() {
   // Header
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(20);
-  doc.setTextColor(20, 30, 55); // Dark blue primary
+  doc.setTextColor(255, 149, 0); // Orange accent primary
   doc.text(resumeData.name.toUpperCase(), margin, y);
   y += 18;
 
@@ -42,10 +42,10 @@ export function generateResumePDF() {
     }
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
-    doc.setTextColor(15, 23, 42);
+    doc.setTextColor(255, 149, 0); // Orange accent
     doc.text(title.toUpperCase(), margin, y);
     y += 5;
-    doc.setDrawColor(15, 23, 42);
+    doc.setDrawColor(255, 149, 0); // Orange accent
     doc.setLineWidth(0.75);
     doc.line(margin, y, margin + contentWidth, y);
     y += 12;

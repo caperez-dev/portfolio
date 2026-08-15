@@ -147,3 +147,4 @@ export function CertificationsSection({ currentTheme, isDarkMode }: Certificatio
     </section>
   );
 }
+
