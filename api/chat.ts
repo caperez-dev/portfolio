@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { GoogleGenAI } from '@google/genai';
-import { CARLOS_RESUME_GROUNDING_CONTEXT, isGeminiKeyConfigured, json } from './_shared';
+import { CARLOS_RESUME_GROUNDING_CONTEXT, isGeminiKeyConfigured, json } from './_shared.js';
 
 export const config = {
   runtime: 'nodejs',

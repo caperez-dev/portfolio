@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { isGeminiKeyConfigured, json } from './_shared';
+import { isGeminiKeyConfigured, json } from './_shared.js';
 
 export const config = {
   runtime: 'nodejs'

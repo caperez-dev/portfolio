@@ -13,7 +13,7 @@ import {
   json,
   sanitizeInput,
   validateContact
-} from './_shared';
+} from './_shared.js';
 
 export const config = {
   runtime: 'nodejs',
