@@ -1,13 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import sgMail from '@sendgrid/mail';
 import crypto from 'crypto';
-import { initializeApp } from 'firebase/app';
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  serverTimestamp
-} from 'firebase/firestore';
+import { initializeApp, getApps, getApp, cert, type ServiceAccount } from 'firebase-admin/app';
+import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import {
   getMailDefaults,
   json,
@@ -20,43 +15,108 @@ export const config = {
   maxDuration: 30
 };
 
-let firestoreDb: any = null;
+let firestoreDb: ReturnType<typeof getFirestore> | null = null;
 let emailConfigured = false;
+let emailInitError: string | null = null;
+let firestoreInitError: string | null = null;
+
+function parseServiceAccount() {
+  const raw = process.env.FIREBASE_SERVICE_ACCOUNT_JSON?.trim();
+  if (raw) {
+    try {
+      return JSON.parse(raw);
+    } catch (parseErr: any) {
+      firestoreInitError = `FIREBASE_SERVICE_ACCOUNT_JSON is not valid JSON: ${parseErr?.message || parseErr}`;
+      console.warn('[Vercel /api/contact]', firestoreInitError);
+      return null;
+    }
+  }
+  return null;
+}
 
 function initFirestore() {
   if (firestoreDb) return firestoreDb;
   try {
-    const firebaseConfig = {
-      apiKey: process.env.FIREBASE_API_KEY,
-      authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-      messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-      appId: process.env.FIREBASE_APP_ID
-    };
+    const projectId = process.env.FIREBASE_PROJECT_ID;
+    const serviceAccount = parseServiceAccount();
 
-    if (firebaseConfig.apiKey && firebaseConfig.projectId) {
-      const firebaseApp = initializeApp(firebaseConfig);
-      firestoreDb = getFirestore(firebaseApp);
+    if (!projectId) {
+      firestoreInitError = 'FIREBASE_PROJECT_ID env var is missing.';
+      console.warn('[Vercel /api/contact] Firestore init skipped:', firestoreInitError);
+      return null;
     }
-  } catch (err) {
+
+    if (getApps().length === 0) {
+      if (serviceAccount) {
+        initializeApp({
+          credential: cert(serviceAccount as ServiceAccount),
+          projectId
+        });
+      } else {
+        initializeApp({ projectId });
+      }
+    } else {
+      getApp();
+    }
+
+    firestoreDb = getFirestore();
+    return firestoreDb;
+  } catch (err: any) {
+    firestoreInitError = err?.message || String(err);
     console.warn('[Vercel /api/contact] Firestore init notice:', err);
     firestoreDb = null;
+    return null;
   }
-  return firestoreDb;
 }
 
 function initEmail() {
   const { sendgridApiKey } = getMailDefaults();
-  if (sendgridApiKey && !emailConfigured) {
+  if (emailConfigured) return true;
+  if (!sendgridApiKey) {
+    emailInitError = 'SENDGRID_API_KEY env var is missing or empty.';
+    console.warn('[Vercel /api/contact] SendGrid init skipped:', emailInitError);
+    return false;
+  }
+  try {
+    sgMail.setApiKey(sendgridApiKey);
+    emailConfigured = true;
+    emailInitError = null;
+    return true;
+  } catch (err: any) {
+    emailInitError = err?.message || String(err);
+    console.warn('[Vercel /api/contact] SendGrid setApiKey failed:', err);
+    return false;
+  }
+}
+
+function formatSendGridError(err: any): Record<string, any> {
+  const out: Record<string, any> = {
+    message: err?.message || String(err)
+  };
+  if (err?.name) out.name = err.name;
+  if (err?.code) out.code = err.code;
+  if (typeof err?.statusCode !== 'undefined') out.statusCode = err.statusCode;
+  if (typeof err?.response?.statusCode !== 'undefined') {
+    out.sgStatusCode = err.response.statusCode;
+  }
+  if (typeof err?.response?.statusMessage !== 'undefined') {
+    out.sgStatusMessage = err.response.statusMessage;
+  }
+  if (err?.response?.headers) {
+    out.sgHeaders = {
+      'x-message-id': err.response.headers['x-message-id'],
+      'content-type': err.response.headers['content-type']
+    };
+  }
+  const body = err?.response?.body;
+  if (body) {
     try {
-      sgMail.setApiKey(sendgridApiKey);
-      emailConfigured = true;
-    } catch (err) {
-      console.warn('[Vercel /api/contact] SendGrid init notice:', err);
+      out.sgBody = typeof body === 'string' ? JSON.parse(body) : body;
+    } catch {
+      out.sgBody = body;
     }
   }
-  return emailConfigured;
+  return out;
 }
 
 async function sendContactNotificationEmail(contact: {
@@ -66,14 +126,40 @@ async function sendContactNotificationEmail(contact: {
   subject: string;
   message: string;
   createdAt: string;
-}): Promise<boolean> {
-  if (!initEmail()) return false;
-  const { contactRecipient, mailFromEmail, mailFromName } = getMailDefaults();
+}): Promise<{ sent: boolean; error?: any; debug?: any }> {
+  const mailDefaults = getMailDefaults();
+  const { contactRecipient, mailFromEmail, mailFromName, sendgridApiKey } = mailDefaults;
+
+  const debug: any = {
+    toEmail: contactRecipient,
+    fromEmail: mailFromEmail,
+    fromName: mailFromName,
+    sendgridKeyPrefix: sendgridApiKey ? `${sendgridApiKey.slice(0, 6)}...` : '(missing)'
+  };
+
+  if (!initEmail()) {
+    return { sent: false, error: emailInitError, debug };
+  }
+
+  if (!mailFromEmail) {
+    const err = 'MAIL_FROM/MAIL_FROM_EMAIL env var is missing — SendGrid requires a verified sender.';
+    console.error('[Vercel /api/contact] Email send skipped:', err, debug);
+    return { sent: false, error: err, debug };
+  }
+
+  if (!contactRecipient) {
+    const err = 'MAIL_TO env var is missing — no recipient to send to.';
+    console.error('[Vercel /api/contact] Email send skipped:', err, debug);
+    return { sent: false, error: err, debug };
+  }
 
   try {
-    await sgMail.send({
+    console.log('[Vercel /api/contact] Attempting SendGrid send with params:', debug);
+
+    const [sgResponse] = await sgMail.send({
       from: { email: mailFromEmail, name: mailFromName },
       to: contactRecipient,
+      replyTo: { email: contact.email, name: contact.fullName },
       subject: `Portfolio contact form: ${contact.subject}`,
       text: `New contact message from ${contact.fullName} <${contact.email}>\n\nPhone: ${contact.phone}\nSubject: ${contact.subject}\n\nMessage:\n${contact.message}\n\nSubmitted: ${contact.createdAt}`,
       html: `
@@ -108,18 +194,27 @@ async function sendContactNotificationEmail(contact: {
         </div>
       `
     });
-    return true;
+
+    const sgStatusCode = sgResponse?.[0]?.statusCode;
+    const sgMsgId = sgResponse?.[0]?.headers?.['x-message-id'];
+    console.log('[Vercel /api/contact] SendGrid send succeeded:', {
+      sgStatusCode,
+      sgMsgId,
+      ...debug
+    });
+
+    return { sent: true, debug: { ...debug, sgStatusCode, sgMsgId } };
   } catch (err: any) {
-    console.error(
-      '[Vercel /api/contact] Failed to send email:',
-      err?.response?.body || err?.message || err
-    );
-    return false;
+    const formatted = formatSendGridError(err);
+    console.error('[Vercel /api/contact] SendGrid FAILED:', JSON.stringify({ ...formatted, ...debug }, null, 2));
+    return { sent: false, error: formatted, debug };
   }
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
 
   if (req.method === 'OPTIONS') {
     return res.status(204).end();
@@ -167,23 +262,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   };
 
   let savedToFirestore = false;
+  let firestoreError: string | null = firestoreInitError;
   let emailSent = false;
+  let emailError: any = emailInitError ? { init: emailInitError } : undefined;
+  let emailDebug: any = undefined;
 
   try {
     const db = initFirestore();
     if (db) {
-      await addDoc(collection(db, 'contacts'), {
+      await db.collection('contacts').add({
         ...contactDoc,
-        timestamp: serverTimestamp()
+        timestamp: FieldValue.serverTimestamp()
       });
       savedToFirestore = true;
+    } else if (firestoreInitError) {
+      firestoreError = firestoreInitError;
     }
-  } catch (dbErr) {
+  } catch (dbErr: any) {
+    firestoreError = dbErr?.message || String(dbErr);
     console.error('[Vercel /api/contact] Firestore save failed:', dbErr);
   }
 
   try {
-    emailSent = await sendContactNotificationEmail({
+    const result = await sendContactNotificationEmail({
       fullName: cleanFullName,
       email: cleanEmail,
       phone: cleanPhone,
@@ -191,20 +292,38 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       message: cleanMessage,
       createdAt: timestampStr
     });
-  } catch (emailErr) {
-    console.error('[Vercel /api/contact] Email send error:', emailErr);
+    emailSent = result.sent;
+    if (result.error) emailError = result.error;
+    if (result.debug) emailDebug = result.debug;
+  } catch (emailErr: any) {
+    emailError = { unexpected: emailErr?.message || String(emailErr) };
+    console.error('[Vercel /api/contact] Unexpected email send error:', emailErr);
   }
+
+  const isDev = process.env.NODE_ENV === 'development';
 
   const userMessage = savedToFirestore
     ? emailSent
       ? "Thanks! Your message was received and I'll review it shortly."
-      : "Thanks! Your message was received. I'll review it shortly, even though email notification could not be sent right now."
-    : 'Thanks! Your message was sent successfully.';
+      : "Thanks! Your message was saved. However, the email notification could not be sent right now — I will still review the submission shortly."
+    : emailSent
+      ? "Thanks! Your message was received and I'll review it shortly."
+      : 'Thanks! Your message was submitted. If you do not hear back within 24 hours, please email me directly at alfonso.cperez08@gmail.com.';
 
-  return json(res, 200, {
+  const responseBody: any = {
     success: true,
     message: userMessage,
     savedToFirestore,
     emailSent
-  });
+  };
+
+  if (firestoreError) responseBody.firestoreError = firestoreError;
+  if (emailError) responseBody.emailError = isDev ? emailError : (typeof emailError === 'string' ? emailError : emailError?.message || 'Email send failed.');
+  if (isDev) {
+    responseBody.debug = {
+      email: emailDebug
+    };
+  }
+
+  return json(res, 200, responseBody);
 }
