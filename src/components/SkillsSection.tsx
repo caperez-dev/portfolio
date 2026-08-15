@@ -14,8 +14,8 @@ interface SkillsSectionProps {
 
 // Helper Cube icon for technologies without provided photos
 const CubeIcon = () => (
-  <svg className="w-8 h-8 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+  <svg className="w-8 h-8 text-[#ff9500]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 16V8a2 2 2 0 0 0-1-1.73l-7-4a2 2 2 0 0 0-2 0l-7 4A2 2 2 0 0 0 3 8v8a2 2 2 0 0 0 1 1.73l7 4a2 2 2 0 0 0 2 0l7-4A2 2 2 0 0 0 21 16z"></path>
     <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
     <line x1="12" y1="22.08" x2="12" y2="12"></line>
   </svg>
@@ -87,7 +87,7 @@ export function SkillsSection({ currentTheme, isDarkMode }: SkillsSectionProps) 
       : allWebDevSkills.filter((skill) => skill.category === selectedCategory);
 
   return (
-    <section id="skills" className="py-12 sm:py-16 border-t border-slate-800/40 relative scroll-mt-16">
+    <section id="skills" className="py-12 sm:py-16 border-t border-white/8 relative scroll-mt-16">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Main Heading with scroll entrance animation */}
         <motion.div
@@ -97,8 +97,8 @@ export function SkillsSection({ currentTheme, isDarkMode }: SkillsSectionProps) 
           transition={{ duration: 0.6, ease: 'easeOut' }}
           className="mb-8 text-left"
         >
-          <div className="flex items-center gap-2 text-cyan-400 font-mono text-xs font-semibold uppercase tracking-wider mb-2">
-            <Code2 className="w-4 h-4" />
+          <div className="flex items-center gap-2 text-[#ff9500] text-xs font-semibold uppercase tracking-wide mb-2">
+            <Code2 className="w-4 h-4 text-[#ff9500]" />
             <span>02 // Skills</span>
           </div>
           <h2
@@ -120,8 +120,8 @@ export function SkillsSection({ currentTheme, isDarkMode }: SkillsSectionProps) 
           transition={{ duration: 0.7, ease: 'easeOut' }}
           className="mb-10"
         >
-          <div className="flex items-center gap-2 text-cyan-400 font-mono text-lg font-bold mb-4 pb-2 border-b border-cyan-500/20">
-            <Code2 className="w-5 h-5 text-cyan-400" />
+          <div className="flex items-center gap-2 text-[#ff9500] text-lg font-bold mb-4 pb-2 bg-[#ff9500]/12 border-b border-[#ff9500]/20 px-3 rounded-lg">
+            <Code2 className="w-5 h-5 text-[#ff9500]" />
             <span>Skills</span>
           </div>
 
@@ -143,7 +143,7 @@ export function SkillsSection({ currentTheme, isDarkMode }: SkillsSectionProps) 
               style={{
                 backgroundImage:
                   'repeating-linear-gradient(135deg, rgba(255,255,255,0.08) 0, rgba(255,255,255,0.08) 1px, transparent 1px, transparent 8px)',
-                opacity: isDarkMode ? 0.12 : 0.08
+                opacity: isDarkMode ? 0.06 : 0.04
               }}
             />
             {/* Filter Buttons Header */}

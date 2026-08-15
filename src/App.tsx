@@ -11,7 +11,8 @@ import { Navbar } from './components/Navbar';
 import { FloatingSidebar } from './components/FloatingSidebar';
 import { HeroBanner } from './components/HeroBanner';
 import { resumeData } from './data/resume';
-import { Code2, ArrowUp, Sparkles, ShieldCheck } from 'lucide-react';
+import { Code2, ArrowUp, Sparkles, ShieldCheck, Briefcase } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 
 const ProjectsSection = lazy(() =>
   import('./components/ProjectsSection').then((mod) => ({ default: mod.ProjectsSection }))
@@ -34,7 +35,7 @@ const AIChatAssistant = lazy(() =>
 
 function LazySection({
   children,
-  rootMargin = '0px 0px 400px 0px',
+  rootMargin = '0px 0px 320px 0px',
   placeholder,
 }: {
   children: ReactNode;
@@ -54,7 +55,7 @@ function LazySection({
           observer.disconnect();
         }
       },
-      { rootMargin }
+      { rootMargin, threshold: 0.04 }
     );
 
     observer.observe(sectionRef.current);
@@ -62,8 +63,33 @@ function LazySection({
   }, [isVisible, rootMargin]);
 
   return (
-    <div ref={sectionRef} className="min-h-[520px]">
-      {isVisible ? children : placeholder}
+    <div ref={sectionRef} className="min-h-[520px] relative">
+      <AnimatePresence mode="wait">
+        {isVisible ? (
+          <motion.div
+            key="content"
+            initial={{ opacity: 0, y: 48, filter: 'blur(14px)' }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            transition={{
+              duration: 0.9,
+              ease: [0.22, 1, 0.36, 1],
+              staggerChildren: 0.06,
+            }}
+          >
+            {children}
+          </motion.div>
+        ) : (
+          <motion.div
+            key="skeleton"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="min-h-[520px]"
+          >
+            {placeholder}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -71,7 +97,7 @@ function LazySection({
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const currentTheme = developerThemes[0];
-  const isDarkMode = true; // Strict Dark Mode per user requirement
+  const isDarkMode = true;
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const [pointerPosition, setPointerPosition] = useState({ x: 50, y: 50 });
@@ -100,7 +126,6 @@ export default function App() {
     };
   }, []);
 
-  // Scroll spy to track active section for navbar
   useEffect(() => {
     const sections = [
       'home',
@@ -127,7 +152,7 @@ export default function App() {
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -136,16 +161,31 @@ export default function App() {
       {isLoading && <LoadingScreen onComplete={() => setIsLoading(false)} />}
 
       <div
-        className={`min-h-screen relative transition-colors duration-300 font-sans ${currentTheme.fontFamily} ${currentTheme.darkBg} ${currentTheme.darkText}`}
+        className={`min-h-screen relative transition-colors duration-500 font-sans antialiased text-white`}
+        style={{ backgroundColor: '#141414', fontFamily: 'inherit' }}
         onMouseMove={handlePointerMove}
       >
-        {/* Cursor-responsive ambient glow */}
+        {/* Apple-style cursor-responsive orange ambient glow + subtle base gradient */}
         <div
           className="pointer-events-none fixed inset-0 z-0"
           style={{
-            backgroundImage: `radial-gradient(circle at ${pointerPosition.x}% ${pointerPosition.y}%, rgba(56,189,248,0.18), transparent 16%), radial-gradient(circle at 80% 80%, rgba(16,185,129,0.08), transparent 35%)`,
+            backgroundImage: `
+              radial-gradient(circle at ${pointerPosition.x}% ${pointerPosition.y}%, rgba(255,149,0,0.20), transparent 22%),
+              radial-gradient(circle at 82% 10%, rgba(255,149,0,0.08), transparent 42%),
+              radial-gradient(circle at 12% 88%, rgba(255,180,60,0.06), transparent 40%)
+            `,
           }}
         />
+        {/* Subtle grain + hairline */}
+        <div
+          aria-hidden
+          className="pointer-events-none fixed inset-0 z-0 opacity-[0.035] mix-blend-overlay"
+          style={{
+            backgroundImage:
+              'url("data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 width=%27160%27 height=%27160%27 viewBox=%270 0 160 160%27><filter id=%27n%27><feTurbulence type=%27fractalNoise%27 baseFrequency=%270.9%27 numOctaves=%272%27 stitchTiles=%27stitch%27/></filter><rect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23n)%27 opacity=%270.8%27/></svg>")',
+          }}
+        />
+
         {/* Navigation Bar */}
         <Navbar
           currentTheme={currentTheme}
@@ -164,32 +204,32 @@ export default function App() {
             onOpenChat={() => setIsChatOpen(true)}
           />
 
-          <LazySection placeholder={<div className="min-h-[520px] flex items-center justify-center text-slate-400">Loading projects...</div>}>
-            <Suspense fallback={<div className="min-h-[520px] flex items-center justify-center text-slate-400">Loading projects...</div>}>
+          <LazySection placeholder={<div className="min-h-[520px] flex items-center justify-center text-white/40 text-sm">Loading projects…</div>}>
+            <Suspense fallback={<div className="min-h-[520px] flex items-center justify-center text-white/40 text-sm">Loading projects…</div>}>
               <ProjectsSection currentTheme={currentTheme} isDarkMode={isDarkMode} />
             </Suspense>
           </LazySection>
 
-          <LazySection placeholder={<div className="min-h-[520px] flex items-center justify-center text-slate-400">Loading skills...</div>}>
-            <Suspense fallback={<div className="min-h-[520px] flex items-center justify-center text-slate-400">Loading skills...</div>}>
+          <LazySection placeholder={<div className="min-h-[520px] flex items-center justify-center text-white/40 text-sm">Loading skills…</div>}>
+            <Suspense fallback={<div className="min-h-[520px] flex items-center justify-center text-white/40 text-sm">Loading skills…</div>}>
               <SkillsSection currentTheme={currentTheme} isDarkMode={isDarkMode} />
             </Suspense>
           </LazySection>
 
-          <LazySection placeholder={<div className="min-h-[520px] flex items-center justify-center text-slate-400">Loading experience...</div>}>
-            <Suspense fallback={<div className="min-h-[520px] flex items-center justify-center text-slate-400">Loading experience...</div>}>
+          <LazySection placeholder={<div className="min-h-[520px] flex items-center justify-center text-white/40 text-sm">Loading experience…</div>}>
+            <Suspense fallback={<div className="min-h-[520px] flex items-center justify-center text-white/40 text-sm">Loading experience…</div>}>
               <ExperienceSection currentTheme={currentTheme} isDarkMode={isDarkMode} />
             </Suspense>
           </LazySection>
 
-          <LazySection placeholder={<div className="min-h-[520px] flex items-center justify-center text-slate-400">Loading certifications...</div>}>
-            <Suspense fallback={<div className="min-h-[520px] flex items-center justify-center text-slate-400">Loading certifications...</div>}>
+          <LazySection placeholder={<div className="min-h-[520px] flex items-center justify-center text-white/40 text-sm">Loading certifications…</div>}>
+            <Suspense fallback={<div className="min-h-[520px] flex items-center justify-center text-white/40 text-sm">Loading certifications…</div>}>
               <CertificationsSection currentTheme={currentTheme} isDarkMode={isDarkMode} />
             </Suspense>
           </LazySection>
 
-          <LazySection placeholder={<div className="min-h-[520px] flex items-center justify-center text-slate-400">Loading contact...</div>}>
-            <Suspense fallback={<div className="min-h-[520px] flex items-center justify-center text-slate-400">Loading contact...</div>}>
+          <LazySection placeholder={<div className="min-h-[520px] flex items-center justify-center text-white/40 text-sm">Loading contact…</div>}>
+            <Suspense fallback={<div className="min-h-[520px] flex items-center justify-center text-white/40 text-sm">Loading contact…</div>}>
               <ContactSection currentTheme={currentTheme} isDarkMode={isDarkMode} />
             </Suspense>
           </LazySection>
@@ -197,23 +237,37 @@ export default function App() {
 
         {/* Floating AI Assistant Toggle Button (Bottom Right) */}
         {!isChatOpen && (
-          <button
+          <motion.button
             onClick={() => setIsChatOpen(true)}
             id="floating-ai-chat-btn"
-            className="fixed bottom-6 right-6 z-40 p-3.5 rounded-full text-white font-bold shadow-2xl flex items-center gap-2 hover:scale-110 active:scale-95 transition-all duration-300 group"
+            className="fixed bottom-6 right-6 z-40 pl-3 pr-4 py-3 rounded-full text-white font-semibold shadow-2xl flex items-center gap-2 group backdrop-blur-xl border border-white/10"
             style={{
-              backgroundColor: currentTheme.darkAccent
+              backgroundColor: 'rgba(28, 28, 30, 0.82)',
+              boxShadow: '0 24px 70px -15px rgba(255, 149, 0, 0.35), 0 10px 30px -12px rgba(0,0,0,0.8)',
             }}
+            whileHover={{ y: -3, scale: 1.04 }}
+            whileTap={{ scale: 0.96 }}
+            transition={{ type: 'spring', stiffness: 380, damping: 24 }}
             title="Ask Carlos's AI Assistant"
           >
-            <Sparkles className="w-5 h-5 animate-spin" />
-            <span className="hidden sm:inline text-xs font-mono font-bold">Ask AI Assistant</span>
-          </button>
+            <span className="relative w-8 h-8 rounded-full flex items-center justify-center"
+              style={{
+                background: 'linear-gradient(135deg, #ff9500 0%, #ffb340 100%)',
+                boxShadow: '0 0 0 0 rgba(255,149,0,0.45)',
+                animation: 'pulseGlow 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              }}
+            >
+              <Sparkles className="w-4 h-4 text-black" />
+            </span>
+            <span className="hidden sm:inline text-[13px] font-semibold tracking-tight">
+              AI Assistant
+            </span>
+          </motion.button>
         )}
 
         {/* AI Chat Drawer / Widget */}
         {isChatOpen && (
-          <Suspense fallback={<div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/95 text-slate-200">Loading AI assistant...</div>}>
+          <Suspense fallback={<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm text-white/80">Loading AI assistant…</div>}>
             <AIChatAssistant
               currentTheme={currentTheme}
               isDarkMode={isDarkMode}
@@ -224,43 +278,124 @@ export default function App() {
         )}
 
         {/* Footer */}
-        <footer className="py-12 border-t text-xs font-mono transition-colors bg-slate-950 border-slate-800 text-slate-400">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <Code2 className="w-4 h-4 text-cyan-400" />
-              <span className="font-bold text-slate-200">{resumeData.name}</span>
+        <footer className="pt-14 pb-10 mt-8 border-t border-white/10 bg-[#0d0d0f]/60 backdrop-blur-xl relative z-10">
+          <div className="max-w-6xl mx-auto px-5 sm:px-8 lg:px-10 flex flex-col gap-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+              {/* Brand & Signature */}
+              <div className="space-y-4 sm:col-span-2">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-2xl flex items-center justify-center shadow-lg"
+                    style={{
+                      background: 'linear-gradient(135deg, #ff9500 0%, #ffb340 100%)',
+                    }}
+                  >
+                    <Code2 className="w-4.5 h-4.5 text-black" />
+                  </div>
+                  <div className="flex flex-col leading-tight">
+                    <span className="text-white font-semibold tracking-tight text-[15px]">
+                      Carlos Alfonso Perez
+                    </span>
+                    <span className="flex items-center gap-1.5 mt-0.5">
+                      <Briefcase className="w-3 h-3 text-[#ff9500]" />
+                      <span className="text-[11px] font-medium text-white/60 tracking-wide uppercase">
+                        Software Developer
+                      </span>
+                    </span>
+                  </div>
+                </div>
+                <p className="text-sm text-white/60 max-w-md leading-relaxed">
+                  Building thoughtful, performant web experiences. Cum Laude IT graduate from UST Manila with enterprise IT operations experience.
+                </p>
+                <motion.div
+                  whileHover={{ scale: 1.02, x: 2 }}
+                  className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-white/10 bg-white/[0.04] backdrop-blur-xl w-fit group cursor-pointer"
+                >
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff9500] opacity-60" />
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#ff9500]" />
+                  </span>
+                  <span className="text-[12px] font-semibold text-white">
+                    Available for work
+                  </span>
+                </motion.div>
+              </div>
+
+              {/* Sitemap */}
+              <div className="space-y-3.5">
+                <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/45">Sitemap</h3>
+                <ul className="space-y-2 text-sm">
+                  {['Home', 'Projects', 'Skills', 'Experience', 'Education', 'Certifications', 'Contact'].map((item) => (
+                    <li key={item}>
+                      <a href={`#${item.toLowerCase()}`} className="text-white/70 hover:text-[#ff9500] transition-colors duration-200">
+                        {item}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Connect */}
+              <div className="space-y-3.5">
+                <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/45">Connect</h3>
+                <ul className="space-y-2 text-sm">
+                  <li>
+                    <a
+                      href={resumeData.contact.linkedin}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-white/70 hover:text-[#ff9500] transition-colors duration-200"
+                    >
+                      LinkedIn
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href={resumeData.contact.github}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-white/70 hover:text-[#ff9500] transition-colors duration-200"
+                    >
+                      GitHub
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href={`mailto:${resumeData.contact.email}`}
+                      className="text-white/70 hover:text-[#ff9500] transition-colors duration-200 break-all"
+                    >
+                      {resumeData.contact.email}
+                    </a>
+                  </li>
+                </ul>
+                <motion.button
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.94 }}
+                  className="mt-4 inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-white/10 bg-white/[0.04] text-white/80 hover:text-[#ff9500] hover:border-[#ff9500]/40 transition-colors text-sm font-medium"
+                  title="Scroll to Top"
+                >
+                  <ArrowUp className="w-4 h-4" />
+                  Back to top
+                </motion.button>
+              </div>
             </div>
 
-            <div className="flex items-center gap-4 text-[11px]">
-              <a
-                href={resumeData.contact.linkedin}
-                target="_blank"
-                rel="noreferrer"
-                className="text-slate-300 hover:text-cyan-400 transition-colors"
-              >
-                LinkedIn
-              </a>
-              <a
-                href={resumeData.contact.github}
-                target="_blank"
-                rel="noreferrer"
-                className="text-slate-300 hover:text-cyan-400 transition-colors"
-              >
-                GitHub
-              </a>
-              <a
-                href={`mailto:${resumeData.contact.email}`}
-                className="text-slate-300 hover:text-cyan-400 transition-colors"
-              >
-                Email
-              </a>
-              <button
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                className="p-1.5 rounded-lg border border-slate-800 hover:bg-slate-800 text-slate-300 transition-all"
-                title="Scroll to Top"
-              >
-                <ArrowUp className="w-4 h-4" />
-              </button>
+            {/* Divider */}
+            <div className="h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+
+            {/* Copyright + bottom row */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <p className="text-[12px] text-white/55 tracking-tight">
+                © 2026 Carlos Alfonso Perez. All rights reserved.
+              </p>
+              <div className="flex items-center gap-4 text-[11px] text-white/40">
+                <div className="flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#ff9500]" />
+                  <span>Privacy first</span>
+                </div>
+                <span>·</span>
+                <span>Handcrafted with React + Tailwind</span>
+              </div>
             </div>
           </div>
         </footer>

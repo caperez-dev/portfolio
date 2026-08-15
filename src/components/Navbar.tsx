@@ -42,11 +42,7 @@ export function Navbar({
   return (
     <header
       id="main-navbar"
-      className={`fixed top-0 left-0 right-0 z-40 transition-colors duration-300 backdrop-blur-md border-b ${
-        isDarkMode
-          ? `${currentTheme.darkCard} ${currentTheme.darkBorder}`
-          : `${currentTheme.lightCard} ${currentTheme.lightBorder}`
-      }`}
+      className="fixed top-0 left-0 right-0 z-40 bg-[rgba(20,20,20,0.72)] backdrop-blur-2xl border-b border-white/8"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand */}
@@ -56,19 +52,26 @@ export function Navbar({
             e.preventDefault();
             handleNavClick('#home');
           }}
-          className="flex flex-col group py-1"
+          className="flex items-center gap-3 group py-1"
           id="navbar-brand-link"
         >
-          <span
-            className={`font-bold text-base sm:text-lg tracking-tight leading-snug ${
-              isDarkMode ? currentTheme.darkText : currentTheme.lightText
-            }`}
-          >
-            Carlos Alfonso Perez
-          </span>
-          <span className="text-[11px] text-cyan-400 font-mono font-medium tracking-wide">
-            Full-stack Developer | Freelancer
-          </span>
+          <div className="flex flex-col">
+            <span className="font-bold text-base sm:text-lg tracking-tight leading-snug text-white">
+              Carlos Alfonso Perez
+            </span>
+            <span className="text-[11px] text-[#ff9500] font-mono font-medium tracking-wide">
+              Full-stack Developer | Freelancer
+            </span>
+          </div>
+          <div className="hidden md:flex items-center rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 gap-1.5">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff9500] opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ff9500]"></span>
+            </span>
+            <span className="text-[12px] uppercase tracking-wider font-semibold text-white/80">
+              Available for work
+            </span>
+          </div>
         </a>
 
         {/* Desktop Nav Links */}
@@ -86,26 +89,24 @@ export function Navbar({
                 }}
                 className={`relative px-3 py-1.5 rounded-md transition-colors duration-200 outline-none focus:outline-none focus:ring-0 ${
                   isActive
-                    ? isDarkMode
-                      ? 'text-cyan-400 font-semibold'
-                      : 'text-cyan-800 font-semibold'
-                    : isDarkMode
-                    ? 'text-slate-300 hover:text-white hover:bg-slate-800/60'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    ? 'text-[#ff9500] font-semibold'
+                    : 'text-white/70 hover:text-white hover:bg-white/[0.04]'
                 }`}
               >
                 {isActive && (
                   <motion.div
                     layoutId="navbar-active-pill"
-                    className={`absolute inset-0 rounded-md pointer-events-none ${
-                      isDarkMode
-                        ? 'bg-cyan-500/15 border border-cyan-500/30'
-                        : 'bg-cyan-100 border border-cyan-300'
-                    }`}
+                    className="absolute inset-0 rounded-md pointer-events-none bg-[#ff9500]/12 border border-[#ff9500]/30"
                     transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                   />
                 )}
-                <span className="relative z-10">{link.name}</span>
+                <motion.span
+                  className="relative z-10 inline-block"
+                  whileHover={{ y: -1 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                >
+                  {link.name}
+                </motion.span>
               </a>
             );
           })}
@@ -117,9 +118,9 @@ export function Navbar({
           <button
             onClick={generateResumePDF}
             id="download-cv-btn"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white transition-all shadow-md hover:shadow-lg hover:scale-105 active:scale-95"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-black transition-all shadow-lg shadow-[#ff9500]/20 hover:scale-105 hover:-translate-y-0.5 active:scale-95"
             style={{
-              backgroundColor: isDarkMode ? currentTheme.darkAccent : currentTheme.lightAccent
+              background: 'linear-gradient(135deg,#ff9500,#ffb340)'
             }}
             title="Download Resume PDF"
           >
@@ -130,7 +131,7 @@ export function Navbar({
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="xl:hidden p-2 rounded-lg border border-slate-700 text-slate-300"
+            className="xl:hidden p-2 rounded-lg border border-white/10 text-white/75"
             id="mobile-menu-btn"
           >
             {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -145,9 +146,7 @@ export function Navbar({
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className={`xl:hidden border-b px-4 py-3 space-y-1 ${
-              isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
-            }`}
+            className="xl:hidden bg-[#141414] border-b border-white/8 px-4 py-3 space-y-1"
           >
             {navLinks.map((link) => (
               <a
@@ -158,11 +157,7 @@ export function Navbar({
                   (e.currentTarget as HTMLElement).blur();
                   handleNavClick(link.href);
                 }}
-                className={`block px-3 py-2 rounded-lg text-sm font-medium outline-none focus:outline-none ${
-                  isDarkMode
-                    ? 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                    : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
-                }`}
+                className="block px-3 py-2 rounded-lg text-sm font-medium outline-none focus:outline-none text-white/80 hover:bg-white/[0.05] hover:text-white"
               >
                 {link.name}
               </a>

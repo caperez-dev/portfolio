@@ -120,7 +120,7 @@ export function AIChatAssistant({
           isExpanded ? 'w-[95vw] md:w-[600px] h-[80vh]' : 'w-[92vw] sm:w-[400px] h-[560px]'
         } ${
           isDarkMode
-            ? 'bg-slate-900 border-slate-700 text-slate-100 shadow-cyan-950/40'
+            ? 'bg-slate-900 border-slate-700 text-slate-100 shadow-[#ff9500]/40'
             : 'bg-white border-slate-200 text-slate-900 shadow-slate-400/30'
         }`}
       >
@@ -130,7 +130,7 @@ export function AIChatAssistant({
           style={{ backgroundColor: isDarkMode ? currentTheme.darkCard : currentTheme.lightAccent }}
         >
           <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-cyan-500/20 text-cyan-300">
+            <div className="p-1.5 rounded-lg bg-[#ff9500]/20 text-[#ff9500]">
               <Bot className="w-4 h-4 animate-bounce" />
             </div>
             <div>
@@ -170,8 +170,8 @@ export function AIChatAssistant({
               <div
                 className={`p-1.5 rounded-full shrink-0 ${
                   msg.sender === 'user'
-                    ? 'bg-cyan-500 text-white'
-                    : 'bg-slate-800 text-cyan-400 border border-slate-700'
+                    ? 'bg-[#ff9500] text-black'
+                    : 'bg-white/[0.05] text-[#ff9500] border border-white/10'
                 }`}
               >
                 {msg.sender === 'user' ? <User className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5" />}
@@ -180,9 +180,9 @@ export function AIChatAssistant({
               <div
                 className={`max-w-[82%] p-3 rounded-2xl leading-relaxed ${
                   msg.sender === 'user'
-                    ? 'bg-cyan-600 text-white rounded-tr-none'
+                    ? 'bg-[#ff9500] text-black rounded-tr-none'
                     : isDarkMode
-                    ? 'bg-slate-800/90 text-slate-200 border border-slate-700 rounded-tl-none'
+                    ? 'bg-white/[0.05] text-white border border-white/10 rounded-tl-none'
                     : 'bg-slate-100 text-slate-800 border border-slate-200 rounded-tl-none'
                 }`}
               >
@@ -212,7 +212,7 @@ export function AIChatAssistant({
                             href={href}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-cyan-400 underline hover:text-cyan-300"
+                            className="text-[#ff9500] underline hover:text-[#ffb340]"
                           >
                             {children}
                           </a>
@@ -222,7 +222,7 @@ export function AIChatAssistant({
                         h3: ({ children }) => <h3 className="text-xs font-semibold mb-1 mt-1">{children}</h3>,
                         code: ({ children }) => (
                           <code className={`px-1.5 py-0.5 rounded text-[10px] font-mono ${
-                            isDarkMode ? 'bg-slate-900 text-cyan-300' : 'bg-slate-200 text-cyan-700'
+                            isDarkMode ? 'bg-slate-900 text-[#ff9500]' : 'bg-slate-200 text-[#ff9500]'
                           }`}>{children}</code>
                         ),
                         blockquote: ({ children }) => (
@@ -244,7 +244,7 @@ export function AIChatAssistant({
           ))}
 
           {isLoading && (
-            <div className="flex items-center gap-2 text-cyan-400 text-xs font-mono p-2">
+            <div className="flex items-center gap-2 text-[#ff9500] text-xs font-mono p-2">
               <Bot className="w-4 h-4 animate-pulse" />
               <span className="flex items-center gap-0.5">
                 <span className="animate-bounce" style={{ animationDelay: '0ms' }}>T</span>
@@ -277,8 +277,8 @@ export function AIChatAssistant({
               onClick={() => handleSendMessage(prompt)}
               className={`px-2 py-1 rounded-md text-[10px] font-mono transition-all truncate max-w-[200px] ${
                 isDarkMode
-                  ? 'text-cyan-300 bg-cyan-950/60 border border-cyan-800/50 hover:bg-cyan-900/60'
-                  : 'text-cyan-700 bg-cyan-50 border border-cyan-200 hover:bg-cyan-100'
+                  ? 'text-[#ff9500] bg-[#ff9500]/15 border border-[#ff9500]/30 hover:bg-[#ff9500]/25'
+                  : 'text-[#ff9500] bg-[#ff9500]/10 border border-[#ff9500]/30 hover:bg-[#ff9500]/20'
               }`}
             >
               {prompt}
@@ -310,14 +310,14 @@ export function AIChatAssistant({
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             placeholder="Ask anything about Carlos..."
-            className={`flex-1 px-3 py-2 rounded-xl text-xs border focus:outline-none focus:border-cyan-500 transition-colors ${
+            className={`flex-1 px-3 py-2 rounded-xl text-xs border focus:outline-none focus:border-[#ff9500] transition-colors ${
               isDarkMode ? 'bg-slate-800 text-white border-slate-700 placeholder-slate-500' : 'bg-slate-50 text-slate-900 border-slate-300 placeholder-slate-400'
             }`}
           />
           <button
             type="submit"
             disabled={!inputText.trim() || isLoading}
-            className="p-2 rounded-xl bg-cyan-500 text-white disabled:opacity-40 hover:bg-cyan-600 transition-all shrink-0 active:scale-95"
+            className="p-2 rounded-xl bg-[#ff9500] text-white disabled:opacity-40 hover:bg-[#ffb340] transition-all shrink-0 active:scale-95"
           >
             <Send className="w-4 h-4" />
           </button>

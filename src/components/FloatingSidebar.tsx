@@ -19,7 +19,7 @@ export function FloatingSidebar() {
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: 0.8 }}
-      className="fixed left-4 top-1/2 -translate-y-1/2 z-40 hidden md:flex flex-col items-center gap-3"
+      className="fixed left-4 top-1/2 -translate-y-1/2 z-40 hidden md:flex flex-col items-center gap-3 p-3 rounded-2xl bg-[#141414]/70 border border-white/8 backdrop-blur-md"
       id="floating-social-sidebar"
     >
       {/* GitHub Profile */}
@@ -28,7 +28,7 @@ export function FloatingSidebar() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="GitHub Profile"
-        className="group relative p-3 rounded-full bg-slate-800/90 hover:bg-slate-700 border border-slate-700/80 text-slate-200 hover:text-white transition-all duration-300 shadow-lg hover:scale-110 active:scale-95"
+        className="group relative p-3 rounded-full bg-[#1c1c1e] hover:bg-[#ff9500]/15 border border-[#ff9500]/30 text-white hover:text-[#ff9500] transition-all duration-300 shadow-lg hover:scale-110 active:scale-95"
       >
         <svg
           className="w-5 h-5 fill-current"
@@ -48,7 +48,7 @@ export function FloatingSidebar() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="LinkedIn Profile"
-        className="group relative p-3 rounded-full bg-[#0077b5]/15 hover:bg-[#0077b5] border border-[#0077b5]/40 text-[#0077b5] hover:text-white transition-all duration-300 shadow-lg shadow-[#0077b5]/20 hover:scale-110 active:scale-95"
+        className="group relative p-3 rounded-full bg-[#1c1c1e] hover:bg-[#ff9500]/15 border border-[#ff9500]/30 text-white hover:text-[#ff9500] transition-all duration-300 shadow-lg shadow-[#ff9500]/10 hover:scale-110 active:scale-95"
       >
         <svg
           className="w-5 h-5 fill-current"
@@ -70,7 +70,7 @@ export function FloatingSidebar() {
         className={`group relative p-3 rounded-full transition-all duration-300 shadow-lg hover:scale-110 active:scale-95 ${
           copied
             ? 'bg-emerald-500/20 border border-emerald-500/60 text-emerald-400 shadow-emerald-500/20'
-            : 'bg-cyan-500/15 hover:bg-cyan-500 border border-cyan-500/40 text-cyan-400 hover:text-slate-950 shadow-cyan-500/20'
+            : 'bg-[#1c1c1e] hover:bg-[#ff9500]/15 border border-[#ff9500]/30 text-white hover:text-[#ff9500] shadow-[#ff9500]/10'
         }`}
       >
         {copied ? <Check className="w-5 h-5 text-emerald-400" /> : <Mail className="w-5 h-5" />}
@@ -85,7 +85,7 @@ export function FloatingSidebar() {
         </span>
       </button>
 
-      <div className="w-0.5 h-16 bg-gradient-to-b from-cyan-500/40 to-transparent" />
+      <div className="w-0.5 h-16 bg-gradient-to-b from-[#ff9500]/40 to-transparent" />
     </motion.div>
   );
 }
