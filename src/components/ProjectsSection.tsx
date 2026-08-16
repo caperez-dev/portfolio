@@ -26,61 +26,59 @@ interface ProjectCardProps {
 }
 
 function ProjectCard({ project, isCenter, position, maxVisible, onClick }: ProjectCardProps) {
-  // Calculate distance from center
   const distance = Math.abs(position);
-  
-  // Calculate transforms based on position
+
   const getScale = () => {
     if (distance === 0) return 1;
-    if (distance === 1) return 0.7;
-    if (distance === 2) return 0.5;
-    return 0.35;
+    if (distance === 1) return 0.72;
+    if (distance === 2) return 0.52;
+    return 0.38;
   };
 
   const getOpacity = () => {
     if (distance === 0) return 1;
-    if (distance === 1) return 0.6;
-    if (distance === 2) return 0.3;
-    return 0.1;
+    if (distance === 1) return 0.55;
+    if (distance === 2) return 0.25;
+    return 0.08;
   };
 
   const getRotateY = () => {
     if (position === 0) return 0;
-    return position > 0 ? -25 : 25;
+    return position > 0 ? -28 : 28;
   };
 
+  // Wider offsets to fill the larger container
   const getTranslateX = () => {
     if (position === 0) return 0;
-    const baseOffset = 280;
-    return position > 0 ? baseOffset * position * 0.6 : baseOffset * position * 0.6;
+    const baseOffset = 420;
+    return position * baseOffset * 0.68;
   };
-
-  const scale = getScale();
-  const opacity = getOpacity();
-  const rotateY = getRotateY();
-  const translateX = getTranslateX();
 
   return (
     <motion.div
       onClick={onClick}
-      className={`absolute w-96 flex-shrink-0 cursor-pointer transition-all ${
-        !isCenter ? 'pointer-events-auto' : ''
-      }`}
+      className={`absolute flex-shrink-0 cursor-pointer
+        w-[340px] sm:w-[440px] lg:w-[560px]
+        ${!isCenter ? 'pointer-events-auto' : ''}
+      `}
       style={{
-        perspective: '1200px',
+        perspective: '1400px',
         left: '50%',
-        marginLeft: '-192px'
+        // Half of lg card width
+        marginLeft: 'calc(-280px)',
       }}
       animate={{
-        scale,
-        opacity,
-        x: translateX,
-        rotateY,
+        scale: getScale(),
+        opacity: getOpacity(),
+        x: getTranslateX(),
+        rotateY: getRotateY(),
         zIndex: Math.max(0, 10 - distance)
       }}
       transition={{
-        duration: 0.5,
-        ease: 'easeInOut'
+        type: 'spring',
+        stiffness: 280,
+        damping: 30,
+        mass: 0.8
       }}
     >
       <div
@@ -102,41 +100,41 @@ function ProjectCard({ project, isCenter, position, maxVisible, onClick }: Proje
         )}
 
         {/* Project Info */}
-        <div className="p-6 flex flex-col flex-grow">
+        <div className="p-5 sm:p-7 flex flex-col flex-grow">
           {/* Category Badge */}
           <div className="mb-3 flex items-center gap-1">
-            <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider bg-[#ff9500]/12 text-[#ff9500] border border-[#ff9500]/30 flex items-center gap-1 w-fit">
-              {project.category === 'capstone' && <Sparkles className="w-3 h-3" />}
-              {project.category === 'web' && <Globe className="w-3 h-3" />}
-              {project.category === 'mobile' && <Smartphone className="w-3 h-3" />}
-              {project.category === 'system' && <Server className="w-3 h-3" />}
+            <span className="px-3 py-1 rounded-md text-[11px] font-mono font-bold uppercase tracking-wider bg-[#ff9500]/12 text-[#ff9500] border border-[#ff9500]/30 flex items-center gap-1.5 w-fit">
+              {project.category === 'capstone' && <Sparkles className="w-3.5 h-3.5" />}
+              {project.category === 'web' && <Globe className="w-3.5 h-3.5" />}
+              {project.category === 'mobile' && <Smartphone className="w-3.5 h-3.5" />}
+              {project.category === 'system' && <Server className="w-3.5 h-3.5" />}
               <span>{project.subtitle}</span>
             </span>
           </div>
 
           {/* Title */}
-          <h3 className="text-lg font-bold text-white mb-2 line-clamp-2">
+          <h3 className="text-xl sm:text-2xl font-bold text-white mb-2.5 line-clamp-2">
             {project.title}
           </h3>
 
           {/* Description Preview */}
-          <p className="text-xs text-white/60 mb-4 line-clamp-2">
+          <p className="text-sm text-white/60 mb-5 line-clamp-2 leading-relaxed">
             {project.description[0]}
           </p>
 
           {/* Tech Stack */}
-          <div className="flex flex-wrap gap-1.5">
-            {project.technologies.slice(0, 3).map((tech) => (
+          <div className="flex flex-wrap gap-2 mt-auto">
+            {project.technologies.slice(0, 4).map((tech) => (
               <span
                 key={tech}
-                className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-white/[0.05] border border-white/10 text-white/70"
+                className="px-2.5 py-1 rounded text-[10px] font-mono font-bold bg-white/[0.05] border border-white/10 text-white/70"
               >
                 {tech}
               </span>
             ))}
-            {project.technologies.length > 3 && (
-              <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold text-white/50">
-                +{project.technologies.length - 3}
+            {project.technologies.length > 4 && (
+              <span className="px-2.5 py-1 rounded text-[10px] font-mono font-bold text-white/50">
+                +{project.technologies.length - 4}
               </span>
             )}
           </div>
@@ -149,7 +147,7 @@ function ProjectCard({ project, isCenter, position, maxVisible, onClick }: Proje
 export function ProjectsSection({ currentTheme, isDarkMode }: ProjectsSectionProps) {
   const projects = resumeData.projects;
   const [currentIndex, setCurrentIndex] = useState(0);
-  const maxVisible = 5; // Number of cards to show (left + center + right + buffer)
+  const maxVisible = 5;
 
   const handlePrev = () => {
     setCurrentIndex((prev) => (prev === 0 ? projects.length - 1 : prev - 1));
@@ -163,43 +161,38 @@ export function ProjectsSection({ currentTheme, isDarkMode }: ProjectsSectionPro
     setCurrentIndex(index);
   };
 
-  // Calculate which projects to display and their positions
   const getProjectPosition = (index: number) => {
     const diff = index - currentIndex;
-    // Wrap around for circular carousel
-    if (diff > projects.length / 2) {
-      return diff - projects.length;
-    } else if (diff < -projects.length / 2) {
-      return diff + projects.length;
-    }
+    if (diff > projects.length / 2) return diff - projects.length;
+    if (diff < -projects.length / 2) return diff + projects.length;
     return diff;
   };
 
   return (
-    <section id="projects" className="py-16 sm:py-24 border-t border-white/8 relative scroll-mt-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="projects" className="py-16 sm:py-20 border-t border-white/8 relative scroll-mt-16">
+      {/* Wider than the standard content column — bleed to near full viewport */}
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.7, ease: 'easeOut' }}
-          className="mb-16 text-left"
+          className="mb-12 text-left"
         >
           <div className="flex items-center gap-2 text-[#ff9500] text-xs font-semibold uppercase tracking-wide mb-3">
             <FolderGit2 className="w-4 h-4" />
-            <span>01 // Featured Projects</span>
+            <span>01 // Recent Projects</span>
           </div>
           <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white">
             Scroll Through My Work
           </h2>
         </motion.div>
 
-        {/* Coverflow Carousel Container */}
-        <div className="relative flex justify-center">
-          {/* Carousel */}
-          <div className="relative w-full h-[600px] flex items-center justify-center">
-            {/* 3D Perspective Container */}
+        {/* Carousel wrapper — overflow hidden so side cards clip cleanly */}
+        <div className="relative overflow-hidden">
+          {/* Track: tall enough for the full-size card */}
+          <div className="relative w-full h-[480px] sm:h-[580px] lg:h-[660px] flex items-center justify-center">
             <div
               style={{
                 perspective: '1500px',
@@ -208,12 +201,10 @@ export function ProjectsSection({ currentTheme, isDarkMode }: ProjectsSectionPro
                 position: 'relative'
               }}
             >
-              {/* Projects Track */}
               <div className="absolute inset-0 flex items-center justify-center">
                 {projects.map((project, idx) => {
                   const position = getProjectPosition(idx);
                   const isVisible = Math.abs(position) <= 2;
-
                   if (!isVisible) return null;
 
                   return (
@@ -224,9 +215,7 @@ export function ProjectsSection({ currentTheme, isDarkMode }: ProjectsSectionPro
                       position={position}
                       maxVisible={maxVisible}
                       onClick={() => {
-                        if (position !== 0) {
-                          handleDotClick(idx);
-                        }
+                        if (position !== 0) handleDotClick(idx);
                       }}
                     />
                   );
@@ -234,10 +223,10 @@ export function ProjectsSection({ currentTheme, isDarkMode }: ProjectsSectionPro
               </div>
             </div>
 
-            {/* Left Arrow */}
+            {/* Left Arrow — sits just inside the container edges */}
             <motion.button
               onClick={handlePrev}
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/10 hover:bg-[#ff9500]/30 text-white hover:text-[#ff9500] border border-white/20 hover:border-[#ff9500]/50 transition-all group -translate-x-20 lg:-translate-x-12"
+              className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/10 hover:bg-[#ff9500]/30 text-white hover:text-[#ff9500] border border-white/20 hover:border-[#ff9500]/50 transition-all"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -247,7 +236,7 @@ export function ProjectsSection({ currentTheme, isDarkMode }: ProjectsSectionPro
             {/* Right Arrow */}
             <motion.button
               onClick={handleNext}
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/10 hover:bg-[#ff9500]/30 text-white hover:text-[#ff9500] border border-white/20 hover:border-[#ff9500]/50 transition-all group translate-x-20 lg:translate-x-12"
+              className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/10 hover:bg-[#ff9500]/30 text-white hover:text-[#ff9500] border border-white/20 hover:border-[#ff9500]/50 transition-all"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -257,7 +246,7 @@ export function ProjectsSection({ currentTheme, isDarkMode }: ProjectsSectionPro
         </div>
 
         {/* Dot Indicators */}
-        <div className="mt-12 flex justify-center gap-2">
+        <div className="mt-8 flex justify-center gap-2">
           {projects.map((_, idx) => (
             <motion.button
               key={idx}
@@ -276,4 +265,3 @@ export function ProjectsSection({ currentTheme, isDarkMode }: ProjectsSectionPro
     </section>
   );
 }
-

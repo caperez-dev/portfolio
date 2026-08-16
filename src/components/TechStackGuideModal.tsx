@@ -149,7 +149,7 @@ export function TechStackGuideModal({
 
           {/* Footer */}
           <div className="p-4 border-t border-slate-800 bg-slate-950 flex items-center justify-between">
-            <span className="text-[11px] text-slate-400 font-mono">Carlos Alfonso B. Perez &bull; Portfolio</span>
+            <span className="text-[11px] text-slate-400 font-mono">&copy; 2026 Carlos Alfonso Perez. All rights reserved.</span>
             <button
               onClick={onClose}
               className="px-4 py-2 rounded-lg bg-[#ff9500] hover:bg-[#ffb340] text-white font-bold text-xs font-mono transition-all"
