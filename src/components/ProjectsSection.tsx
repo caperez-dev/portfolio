@@ -124,7 +124,7 @@ function ProjectCard({ project, isCenter, position, maxVisible, onClick }: Proje
 
           {/* Tech Stack */}
           <div className="flex flex-wrap gap-2 mt-auto">
-            {project.technologies.slice(0, 4).map((tech) => (
+            {project.technologies.map((tech) => (
               <span
                 key={tech}
                 className="px-2.5 py-1 rounded text-[10px] font-mono font-bold bg-white/[0.05] border border-white/10 text-white/70"
@@ -132,11 +132,6 @@ function ProjectCard({ project, isCenter, position, maxVisible, onClick }: Proje
                 {tech}
               </span>
             ))}
-            {project.technologies.length > 4 && (
-              <span className="px-2.5 py-1 rounded text-[10px] font-mono font-bold text-white/50">
-                +{project.technologies.length - 4}
-              </span>
-            )}
           </div>
         </div>
       </div>

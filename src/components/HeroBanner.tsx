@@ -6,6 +6,7 @@ import { generateResumePDF } from '../utils/pdfGenerator';
 import { scrollToSection } from '../utils/scrollToSection';
 import { ThemeOption } from '../types';
 import portraitSrc from '../assets/Perez, Carlos Alfonso B (IT) - No Logo.png';
+import brandingSrc from '../assets/carlos branding.png';
 
 interface HeroBannerProps {
   currentTheme: ThemeOption;
@@ -103,6 +104,28 @@ export function HeroBanner({ currentTheme, isDarkMode }: HeroBannerProps) {
         }
         .pulse-dot {
           animation: pulse-dot 2.2s ease-in-out infinite;
+        }
+        .portrait-flip-container {
+          perspective: 1000px;
+        }
+        .portrait-flip-card {
+          position: relative;
+          transform-style: preserve-3d;
+          transition: transform 0.65s cubic-bezier(0.4, 0.2, 0.2, 1);
+        }
+        .portrait-flip-container:hover .portrait-flip-card {
+          transform: rotateY(180deg);
+        }
+        .portrait-face {
+          position: absolute;
+          inset: 0;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+          border-radius: 1.5rem;
+          overflow: hidden;
+        }
+        .portrait-back {
+          transform: rotateY(180deg);
         }
       `}</style>
 
@@ -221,25 +244,60 @@ export function HeroBanner({ currentTheme, isDarkMode }: HeroBannerProps) {
             transition={{ duration: 0.9, delay: 0.4, ease: easeOutExpo }}
             className="flex-[4] flex-shrink-0 w-48 sm:w-64 lg:w-auto"
           >
-            <div
-              className="relative rounded-3xl overflow-hidden"
-              style={{
-                boxShadow: '0 0 40px rgba(255, 149, 0, 0.22), 0 0 80px rgba(255, 149, 0, 0.10)',
-              }}
-            >
-              {/* Subtle accent ring */}
+            {/* Flip card container */}
+            <div className="portrait-flip-container">
+              {/* The flip card — shadow and ring are ON the card so they flip with it */}
               <div
-                className="absolute inset-0 rounded-3xl z-10 pointer-events-none"
+                className="portrait-flip-card w-full"
                 style={{
-                  boxShadow: 'inset 0 0 0 1.5px rgba(255, 149, 0, 0.25)',
+                  boxShadow: '0 0 40px rgba(255, 149, 0, 0.22), 0 0 80px rgba(255, 149, 0, 0.10)',
+                  borderRadius: '1.5rem',
                 }}
-              />
-              <img
-                src={portraitSrc}
-                alt="Carlos Perez"
-                className="w-full h-full object-cover block"
-                style={{ aspectRatio: '4/5' }}
-              />
+              >
+                {/* Front: portrait photo */}
+                <div className="portrait-face portrait-front">
+                  <img
+                    src={portraitSrc}
+                    alt="Carlos Perez"
+                    className="w-full h-full object-cover block"
+                    style={{ aspectRatio: '4/5' }}
+                    draggable={false}
+                  />
+                  {/* Accent ring on front */}
+                  <div
+                    className="absolute inset-0 rounded-3xl pointer-events-none z-10"
+                    style={{ boxShadow: 'inset 0 0 0 1.5px rgba(255, 149, 0, 0.25)' }}
+                  />
+                </div>
+
+                {/* Back: brand logo */}
+                <div
+                  className="portrait-face portrait-back flex items-center justify-center"
+                  style={{ backgroundColor: '#111111', aspectRatio: '4/5' }}
+                >
+                  <img
+                    src={brandingSrc}
+                    alt="Carlos Perez branding"
+                    className="w-4/5 h-4/5 object-contain"
+                    draggable={false}
+                  />
+                  {/* Accent ring on back */}
+                  <div
+                    className="absolute inset-0 rounded-3xl pointer-events-none z-10"
+                    style={{ boxShadow: 'inset 0 0 0 1.5px rgba(255, 149, 0, 0.25)' }}
+                  />
+                </div>
+
+                {/* Invisible spacer so the container has the right height */}
+                <img
+                  src={portraitSrc}
+                  alt=""
+                  aria-hidden="true"
+                  className="w-full block invisible"
+                  style={{ aspectRatio: '4/5' }}
+                  draggable={false}
+                />
+              </div>
             </div>
           </motion.div>
 

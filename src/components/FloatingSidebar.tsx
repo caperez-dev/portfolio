@@ -1,17 +1,24 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { Mail, Check } from 'lucide-react';
+import { Mail, Check, Phone } from 'lucide-react';
 import { resumeData } from '../data/resume';
 
+const PHONE_NUMBER = '+63 977 427 9909';
+
 export function FloatingSidebar() {
-  const [copied, setCopied] = useState(false);
+  const [copiedEmail, setCopiedEmail] = useState(false);
+  const [copiedPhone, setCopiedPhone] = useState(false);
 
   const handleCopyEmail = () => {
     navigator.clipboard.writeText(resumeData.contact.email);
-    setCopied(true);
-    setTimeout(() => {
-      setCopied(false);
-    }, 2000);
+    setCopiedEmail(true);
+    setTimeout(() => setCopiedEmail(false), 2000);
+  };
+
+  const handleCopyPhone = () => {
+    navigator.clipboard.writeText(PHONE_NUMBER);
+    setCopiedPhone(true);
+    setTimeout(() => setCopiedPhone(false), 2000);
   };
 
   return (
@@ -68,20 +75,43 @@ export function FloatingSidebar() {
         onClick={handleCopyEmail}
         aria-label="Copy Email Address"
         className={`group relative p-3 rounded-full transition-all duration-300 shadow-lg hover:scale-110 active:scale-95 ${
-          copied
+          copiedEmail
             ? 'bg-[#ff9500]/20 border border-[#ff9500]/60 text-[#ff9500] shadow-[#ff9500]/20'
             : 'bg-[#1c1c1e] hover:bg-[#ff9500]/15 border border-[#ff9500]/30 text-white hover:text-[#ff9500] shadow-[#ff9500]/10'
         }`}
       >
-        {copied ? <Check className="w-5 h-5 text-[#ff9500]" /> : <Mail className="w-5 h-5" />}
+        {copiedEmail ? <Check className="w-5 h-5 text-[#ff9500]" /> : <Mail className="w-5 h-5" />}
         <span
           className={`absolute left-full ml-3 px-2.5 py-1 rounded-md text-[11px] font-medium whitespace-nowrap transition-all duration-200 pointer-events-none shadow-md border ${
-            copied
+            copiedEmail
               ? 'opacity-100 bg-slate-950 text-[#ffb340] border-[#ff9500]/50 font-bold scale-105'
               : 'opacity-0 group-hover:opacity-100 bg-slate-900 text-white border-slate-700'
           }`}
         >
-          {copied ? 'Copied to clipboard!' : `Copy Email (${resumeData.contact.email})`}
+          {copiedEmail ? 'Copied to clipboard!' : `Copy Email (${resumeData.contact.email})`}
+        </span>
+      </button>
+
+      {/* Copy Phone Button */}
+      <button
+        type="button"
+        onClick={handleCopyPhone}
+        aria-label="Copy Phone Number"
+        className={`group relative p-3 rounded-full transition-all duration-300 shadow-lg hover:scale-110 active:scale-95 ${
+          copiedPhone
+            ? 'bg-[#ff9500]/20 border border-[#ff9500]/60 text-[#ff9500] shadow-[#ff9500]/20'
+            : 'bg-[#1c1c1e] hover:bg-[#ff9500]/15 border border-[#ff9500]/30 text-white hover:text-[#ff9500] shadow-[#ff9500]/10'
+        }`}
+      >
+        {copiedPhone ? <Check className="w-5 h-5 text-[#ff9500]" /> : <Phone className="w-5 h-5" />}
+        <span
+          className={`absolute left-full ml-3 px-2.5 py-1 rounded-md text-[11px] font-medium whitespace-nowrap transition-all duration-200 pointer-events-none shadow-md border ${
+            copiedPhone
+              ? 'opacity-100 bg-slate-950 text-[#ffb340] border-[#ff9500]/50 font-bold scale-105'
+              : 'opacity-0 group-hover:opacity-100 bg-slate-900 text-white border-slate-700'
+          }`}
+        >
+          {copiedPhone ? 'Copied to clipboard!' : `Copy Number (${PHONE_NUMBER})`}
         </span>
       </button>
 

@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { ThemeOption } from '../types';
 import { generateResumePDF } from '../utils/pdfGenerator';
-import portraitSrc from '../assets/Perez, Carlos Alfonso B (IT) - No Logo.png';
+import portraitSrc from '../assets/carlos branding.png';
 
 interface NavbarProps {
   currentTheme: ThemeOption;
@@ -85,11 +85,16 @@ export function Navbar({
                 }`}
               >
                 {isActive && (
-                  <motion.div
-                    layoutId="navbar-active-pill"
-                    className="absolute inset-0 rounded-md pointer-events-none bg-[#ff9500]/12 border border-[#ff9500]/30"
-                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                  />
+                  <AnimatePresence>
+                    <motion.div
+                      key={link.name}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute inset-0 rounded-md pointer-events-none bg-[#ff9500]/12 border border-[#ff9500]/30"
+                    />
+                  </AnimatePresence>
                 )}
                 <motion.span
                   className="relative z-10 inline-block"

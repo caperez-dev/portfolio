@@ -4,6 +4,7 @@ import { Sparkles, Send, X, Bot, User, ShieldCheck, Minimize2, Maximize2 } from 
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { ChatMessage, ThemeOption } from '../types';
+import carlosBranding from '../assets/carlos branding.png';
 
 interface AIChatAssistantProps {
   currentTheme: ThemeOption;
@@ -130,9 +131,7 @@ export function AIChatAssistant({
           style={{ backgroundColor: isDarkMode ? currentTheme.darkCard : currentTheme.lightAccent }}
         >
           <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-[#ff9500]/20 text-[#ff9500]">
-              <Bot className="w-4 h-4 animate-bounce" />
-            </div>
+            <img src={carlosBranding} alt="Carlos" className="w-8 h-8 rounded-full object-cover shrink-0" />
             <div>
               <div className="text-xs font-bold font-mono flex items-center gap-1.5">
                 <span>Carlos' Assistant</span>
