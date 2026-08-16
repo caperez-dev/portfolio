@@ -108,15 +108,15 @@ export function AIChatAssistant({
     }
   };
 
-  if (!isOpen) return null;
-
   return (
     <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0, y: 30, scale: 0.95 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: 30, scale: 0.95 }}
-        className={`fixed bottom-4 right-4 z-50 rounded-2xl border shadow-2xl overflow-hidden flex flex-col transition-all duration-300 ${
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: 30, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 20, scale: 0.97 }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
+          className={`fixed bottom-4 right-4 z-50 rounded-2xl border shadow-2xl overflow-hidden flex flex-col transition-all duration-300 ${
           isExpanded ? 'w-[95vw] md:w-[600px] h-[80vh]' : 'w-[92vw] sm:w-[400px] h-[560px]'
         } ${
           isDarkMode
@@ -135,24 +135,33 @@ export function AIChatAssistant({
             </div>
             <div>
               <div className="text-xs font-bold font-mono flex items-center gap-1.5">
-                <span>Carlos's AI Assistant</span>
+                <span>Carlos' Assistant</span>
+              </div>
+              <div className="flex items-center gap-1 mt-0.5">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400"></span>
+                </span>
+                <span className="text-[10px] text-emerald-400 font-mono">Online</span>
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-1">
-            <button
+            <motion.button
               onClick={() => setIsExpanded(!isExpanded)}
+              whileTap={{ scale: 0.88 }}
               className="p-1.5 rounded-md hover:bg-white/10 text-slate-300 hover:text-white"
             >
               {isExpanded ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               onClick={onClose}
+              whileTap={{ scale: 0.88 }}
               className="p-1.5 rounded-md hover:bg-white/10 text-slate-300 hover:text-white"
             >
               <X className="w-4 h-4" />
-            </button>
+            </motion.button>
           </div>
         </div>
 
@@ -292,7 +301,7 @@ export function AIChatAssistant({
             ? 'text-white/40 border-white/10 bg-[#0d0d0f]'
             : 'text-white/40 border-white/10 bg-white'
         }`}>
-          ✨ Powered by Google Gemini AI
+          Powered by Google Gemini AI
         </div>
 
         {/* Input Box */}
@@ -323,6 +332,7 @@ export function AIChatAssistant({
           </button>
         </form>
       </motion.div>
+      )}
     </AnimatePresence>
   );
 }

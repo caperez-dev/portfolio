@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'motion/react';
 import { ThemeOption, ContactFormData, ContactSubmitResponse } from '../types';
 import { resumeData } from '../data/resume';
@@ -16,6 +16,125 @@ interface ContactSectionProps {
   currentTheme: ThemeOption;
   isDarkMode: boolean;
 }
+
+// ── Particle canvas ────────────────────────────────────────────────────────────
+const DOT_COUNT   = 80;
+const MAX_DIST    = 130;   // px — max distance to draw a connecting line
+const DOT_RADIUS  = 1.8;
+const DOT_SPEED   = 0.35;  // px/frame
+const ACCENT      = '245, 166, 35'; // rgb of #f5a623
+
+interface Particle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+}
+
+function makeParticle(w: number, h: number): Particle {
+  const angle = Math.random() * Math.PI * 2;
+  return {
+    x:  Math.random() * w,
+    y:  Math.random() * h,
+    vx: Math.cos(angle) * DOT_SPEED,
+    vy: Math.sin(angle) * DOT_SPEED,
+  };
+}
+
+function ParticleCanvas() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const particles  = useRef<Particle[]>([]);
+  const rafRef     = useRef<number>(0);
+
+  const init = useCallback((w: number, h: number) => {
+    particles.current = Array.from({ length: DOT_COUNT }, () => makeParticle(w, h));
+  }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const resize = () => {
+      const rect = canvas.parentElement!.getBoundingClientRect();
+      canvas.width  = rect.width;
+      canvas.height = rect.height;
+      init(canvas.width, canvas.height);
+    };
+
+    resize();
+    const ro = new ResizeObserver(resize);
+    ro.observe(canvas.parentElement!);
+
+    const draw = () => {
+      const { width: w, height: h } = canvas;
+      ctx.clearRect(0, 0, w, h);
+
+      const pts = particles.current;
+
+      // Move & wrap
+      for (const p of pts) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0)  p.x += w;
+        if (p.x > w)  p.x -= w;
+        if (p.y < 0)  p.y += h;
+        if (p.y > h)  p.y -= h;
+      }
+
+      // Connecting lines
+      for (let i = 0; i < pts.length; i++) {
+        for (let j = i + 1; j < pts.length; j++) {
+          const dx   = pts[i].x - pts[j].x;
+          const dy   = pts[i].y - pts[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < MAX_DIST) {
+            const alpha = (1 - dist / MAX_DIST) * 0.35;
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(${ACCENT}, ${alpha})`;
+            ctx.lineWidth   = 0.8;
+            ctx.moveTo(pts[i].x, pts[i].y);
+            ctx.lineTo(pts[j].x, pts[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Dots
+      for (const p of pts) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, DOT_RADIUS, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${ACCENT}, 0.7)`;
+        ctx.fill();
+        // subtle glow
+        ctx.shadowBlur  = 6;
+        ctx.shadowColor = `rgba(${ACCENT}, 0.5)`;
+        ctx.fill();
+        ctx.shadowBlur  = 0;
+      }
+
+      rafRef.current = requestAnimationFrame(draw);
+    };
+
+    rafRef.current = requestAnimationFrame(draw);
+
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+      ro.disconnect();
+    };
+  }, [init]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 w-full h-full"
+      style={{ pointerEvents: 'none', zIndex: 0 }}
+      aria-hidden="true"
+    />
+  );
+}
+// ──────────────────────────────────────────────────────────────────────────────
 
 export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps) {
   const [formData, setFormData] = useState<ContactFormData>({
@@ -106,8 +225,11 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
   };
 
   return (
-    <section id="contact" className="py-12 sm:py-16 border-t border-white/8 relative scroll-mt-16">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="contact" className="py-12 sm:py-16 border-t border-white/8 relative overflow-hidden scroll-mt-16">
+      {/* Particle background */}
+      <ParticleCanvas />
+
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Heading */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -125,7 +247,7 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
               isDarkMode ? currentTheme.darkText : currentTheme.lightText
             }`}
           >
-            Contact Carlos
+            Let's start a project together
           </h2>
           <p className="text-sm text-white/80 mt-2 max-w-2xl">
             Got a project? Let's build it.
@@ -167,21 +289,9 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
                   </div>
                   <div>
                     <div className="text-white/55 font-medium">Email Address</div>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-white/90 font-bold break-all">
-                        {resumeData.contact.email}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          navigator.clipboard.writeText(resumeData.contact.email);
-                          alert('Email address copied to clipboard!');
-                        }}
-                        className="px-2 py-0.5 rounded text-[10px] bg-white/[0.04] hover:bg-white/[0.08] text-white/80 border border-white/10 transition-colors"
-                      >
-                        Copy
-                      </button>
-                    </div>
+                    <span className="text-white/90 font-bold break-all mt-0.5 block">
+                      {resumeData.contact.email}
+                    </span>
                   </div>
                 </div>
 
@@ -247,7 +357,7 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
                     name="fullName"
                     value={formData.fullName}
                     onChange={handleChange}
-                    placeholder="Enter your full name"
+                    placeholder="Your full name"
                     required
                     className={`w-full px-3.5 py-2.5 rounded-xl text-xs border transition-all focus:outline-none ${
                       fieldErrors.fullName ? 'border-red-500 focus:ring-red-500' : 'border-white/10 focus:border-[#ff9500]/50 focus:ring-1 focus:ring-[#ff9500]/40'
@@ -268,7 +378,7 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    placeholder="Enter your email address"
+                    placeholder="you@domain.com"
                     required
                     className={`w-full px-3.5 py-2.5 rounded-xl text-xs border transition-all focus:outline-none ${
                       fieldErrors.email ? 'border-red-500 focus:ring-red-500' : 'border-white/10 focus:border-[#ff9500]/50 focus:ring-1 focus:ring-[#ff9500]/40'
@@ -284,7 +394,8 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
                 {/* Mobile / Phone */}
                 <div>
                   <label className="block text-xs font-mono font-medium text-white/80 mb-1">
-                    Mobile / Phone <span className="text-[#ff9500]">*</span>
+                    Mobile / Phone{' '}
+                    <span className="text-white/35 font-normal">(Optional)</span>
                   </label>
                   <div className="flex items-stretch gap-2">
                     <div className="relative" ref={countryDropdownRef}>
@@ -321,8 +432,7 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      placeholder="Enter phone number"
-                      required
+                      placeholder="Mobile Number"
                       className={`flex-1 px-3.5 py-2.5 rounded-xl text-xs border transition-all focus:outline-none ${
                         fieldErrors.phone ? 'border-red-500 focus:ring-red-500' : 'border-white/10 focus:border-[#ff9500]/50 focus:ring-1 focus:ring-[#ff9500]/40'
                       } bg-white/[0.04] text-white placeholder-white/35`}
@@ -358,14 +468,14 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
               {/* Message */}
               <div>
                 <label className="block text-xs font-mono font-medium text-white/80 mb-1">
-                  Message Details <span className="text-[#ff9500]">*</span>
+                  Message <span className="text-[#ff9500]">*</span>
                 </label>
                 <textarea
                   name="message"
                   rows={4}
                   value={formData.message}
                   onChange={handleChange}
-                  placeholder="Enter message details"
+                  placeholder="Tell me about the project"
                   required
                   className={`w-full px-3.5 py-2.5 rounded-xl text-xs border transition-all focus:outline-none resize-none ${
                     fieldErrors.message ? 'border-red-500 focus:ring-red-500' : 'border-white/10 focus:border-[#ff9500]/50 focus:ring-1 focus:ring-[#ff9500]/40'

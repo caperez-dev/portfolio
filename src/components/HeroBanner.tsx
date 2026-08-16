@@ -5,9 +5,7 @@ import { resumeData } from '../data/resume';
 import { generateResumePDF } from '../utils/pdfGenerator';
 import { scrollToSection } from '../utils/scrollToSection';
 import { ThemeOption } from '../types';
-
-// Drop a real portrait here when available — falls back to initials placeholder
-const PORTRAIT_SRC = 'https://via.placeholder.com/400/111111/ff9500?text=CA';
+import portraitSrc from '../assets/Perez, Carlos Alfonso B (IT) - No Logo.png';
 
 interface HeroBannerProps {
   currentTheme: ThemeOption;
@@ -237,7 +235,7 @@ export function HeroBanner({ currentTheme, isDarkMode }: HeroBannerProps) {
                 }}
               />
               <img
-                src={PORTRAIT_SRC}
+                src={portraitSrc}
                 alt="Carlos Perez"
                 className="w-full h-full object-cover block"
                 style={{ aspectRatio: '4/5' }}

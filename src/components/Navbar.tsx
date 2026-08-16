@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { ThemeOption } from '../types';
 import { generateResumePDF } from '../utils/pdfGenerator';
+import portraitSrc from '../assets/Perez, Carlos Alfonso B (IT) - No Logo.png';
 
 interface NavbarProps {
   currentTheme: ThemeOption;
@@ -58,7 +59,7 @@ export function Navbar({
           id="navbar-brand-link"
         >
           <img
-            src="https://via.placeholder.com/40/ff9500/ffffff?text=CA"
+            src={portraitSrc}
             alt="Profile"
             className="w-10 h-10 rounded-full object-cover"
           />

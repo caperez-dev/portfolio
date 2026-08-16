@@ -294,7 +294,7 @@ export default function App() {
               <Sparkles className="w-4 h-4 text-black" />
             </span>
             <span className="hidden sm:inline text-[13px] font-semibold tracking-tight">
-              AI Assistant
+              Ask AI
             </span>
           </motion.button>
         )}

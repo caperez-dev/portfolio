@@ -25,64 +25,64 @@ export const resumeData: ResumeData = {
       {
         category: "Software Packaging",
         skills: [
-          { name: "Software Packaging and Deployment", logoKey: "packaging" },
-          { name: "PowerShell Scripting", logoKey: "powershell" },
-          { name: "ServiceNow", logoKey: "servicenow" },
-          { name: "Patch My PC", logoKey: "patchmypc" },
-          { name: "IntuneWin", logoKey: "intunewin" },
-          { name: "Advanced Installer", logoKey: "installer" }
+          { name: "Software Packaging and Deployment", logoKey: "packaging",  filterCategory: "packaging" },
+          { name: "PowerShell Scripting",               logoKey: "powershell", filterCategory: "packaging" },
+          { name: "ServiceNow",                         logoKey: "servicenow", filterCategory: "packaging" },
+          { name: "Patch My PC",                        logoKey: "patchmypc",  filterCategory: "packaging" },
+          { name: "IntuneWin",                          logoKey: "intunewin",  filterCategory: "packaging" },
+          { name: "Advanced Installer",                 logoKey: "installer",  filterCategory: "packaging" }
         ]
       },
       {
         category: "Programming Languages",
         skills: [
-          { name: "PHP", logoKey: "php" },
-          { name: "Java", logoKey: "java" },
-          { name: "JavaScript", logoKey: "javascript" },
-          { name: "HTML5", logoKey: "html5" },
-          { name: "CSS3", logoKey: "css3" }
+          { name: "PHP",        logoKey: "php",        filterCategory: "backend"  },
+          { name: "Java",       logoKey: "java",       filterCategory: "backend"  },
+          { name: "JavaScript", logoKey: "javascript", filterCategory: "frontend" },
+          { name: "HTML5",      logoKey: "html5",      filterCategory: "frontend" },
+          { name: "CSS3",       logoKey: "css3",       filterCategory: "frontend" }
         ]
       },
       {
         category: "Frameworks & Libraries",
         skills: [
-          { name: "React.js", logoKey: "react" },
-          { name: "AngularJS", logoKey: "angular" },
-          { name: "Express.js", logoKey: "express" },
-          { name: "PHP Laravel", logoKey: "laravel" },
-          { name: "Bootstrap", logoKey: "bootstrap" },
-          { name: "MaterializeCSS", logoKey: "css3" }
+          { name: "React.js",      logoKey: "react",        filterCategory: "frontend" },
+          { name: "AngularJS",     logoKey: "angular",      filterCategory: "frontend" },
+          { name: "Express.js",    logoKey: "express",      filterCategory: "backend"  },
+          { name: "PHP Laravel",   logoKey: "laravel",      filterCategory: "backend"  },
+          { name: "Bootstrap",     logoKey: "bootstrap",    filterCategory: "frontend" },
+          { name: "MaterializeCSS",logoKey: "materializecss",filterCategory: "frontend" }
         ]
       },
       {
         category: "Databases",
         skills: [
-          { name: "MySQL Workbench", logoKey: "mysql" },
-          { name: "HeidiSQL", logoKey: "heidisql" },
-          { name: "Firebase Firestore", logoKey: "firebase" }
+          { name: "MySQL Workbench",   logoKey: "mysql",    filterCategory: "databases" },
+          { name: "HeidiSQL",          logoKey: "heidisql", filterCategory: "databases" },
+          { name: "Firebase Firestore",logoKey: "firebase", filterCategory: "databases" }
         ]
       },
       {
         category: "Version Control",
         skills: [
-          { name: "Git", logoKey: "git" },
-          { name: "GitHub", logoKey: "github" }
+          { name: "Git",    logoKey: "git",    filterCategory: "devops" },
+          { name: "GitHub", logoKey: "github", filterCategory: "devops" }
         ]
       },
       {
         category: "Methodologies",
         skills: [
-          { name: "SDLC", logoKey: "sdlc" },
-          { name: "Agile (Scrum & Kanban)", logoKey: "trello" }
+          { name: "SDLC",                  logoKey: "sdlc",   filterCategory: "devops" },
+          { name: "Agile (Scrum & Kanban)", logoKey: "trello", filterCategory: "devops" }
         ]
       },
       {
         category: "Wireframe & Design",
         skills: [
-          { name: "Figma", logoKey: "figma" },
-          { name: "Canva", logoKey: "canva" },
-          { name: "Draw.io", logoKey: "drawio" },
-          { name: "Lucidchart", logoKey: "lucidchart" }
+          { name: "Figma",      logoKey: "figma",      filterCategory: "design" },
+          { name: "Canva",      logoKey: "canva",      filterCategory: "design" },
+          { name: "Draw.io",    logoKey: "drawio",     filterCategory: "design" },
+          { name: "Lucidchart", logoKey: "lucidchart", filterCategory: "design" }
         ]
       }
     ],

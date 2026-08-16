@@ -49,7 +49,7 @@ export interface ProjectItem {
 
 export interface TechSkillCategory {
   category: string;
-  skills: { name: string; logoKey?: string }[];
+  skills: { name: string; logoKey?: string; filterCategory?: string }[];
 }
 
 export interface ResumeData {
