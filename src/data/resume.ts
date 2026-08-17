@@ -274,7 +274,7 @@ export const resumeData: ResumeData = {
       title: "Elysian: Resort Reservation System",
       subtitle: "Web Application",
       category: "web",
-      technologies: ["React.js", "Node.js", "Express.js", "MongoDB", "Stripe API"],
+      technologies: ["PHP", "MySQL Database"],
       role: "Full-Stack Development, UI/UX Design, System Documentation",
       description: [
         "Developed a full-stack resort reservation platform with real-time room availability tracking.",
