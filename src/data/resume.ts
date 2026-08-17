@@ -194,9 +194,9 @@ export const resumeData: ResumeData = {
         "Designed 10+ system diagrams and executed 50 test cases.",
         "Deployed the live system on Hostinger using HTML, Bootstrap, JavaScript, PHP, and MySQL."
       ],
+      logo: new URL('../assets/projects/paramdam.png', import.meta.url).href,
       images: [
-        "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=800&auto=format&fit=crop&q=80"
+        new URL('../assets/projects/paramdam1.png', import.meta.url).href
       ]
     },
     {
@@ -264,9 +264,43 @@ export const resumeData: ResumeData = {
         "Designed a MySQL database to track products, stock levels, and transactions.",
         "Implemented CRUD operations to streamline inventory tracking for small businesses."
       ],
+      logo: new URL('../assets/projects/pixelpop.png', import.meta.url).href,
       images: [
-        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&auto=format&fit=crop&q=80"
+        new URL('../assets/projects/pixelpop1.jpg', import.meta.url).href
+      ]
+    },
+    {
+      id: "elysian",
+      title: "Elysian: Resort Reservation System",
+      subtitle: "Web Application",
+      category: "web",
+      technologies: ["React.js", "Node.js", "Express.js", "MongoDB", "Stripe API"],
+      role: "Full-Stack Development, UI/UX Design, System Documentation",
+      description: [
+        "Developed a full-stack resort reservation platform with real-time room availability tracking.",
+        "Integrated secure payment processing through Stripe and designed an intuitive booking flow for guests.",
+        "Built an admin dashboard for managing reservations, room assignments, and customer inquiries."
+      ],
+      logo: new URL('../assets/projects/elysian.png', import.meta.url).href,
+      images: [
+        new URL('../assets/projects/elysian1.png', import.meta.url).href
+      ]
+    },
+    {
+      id: "analist",
+      title: "Analist: To-Do List Mobile App",
+      subtitle: "Mobile Application",
+      category: "mobile",
+      technologies: ["Flutter", "Dart", "SQLite", "Provider State Management"],
+      role: "Mobile Development, UI/UX Design",
+      description: [
+        "Built a cross-platform to-do list mobile app with offline-first architecture using SQLite.",
+        "Implemented category tagging, priority levels, and swipe-to-delete gestures for quick task management.",
+        "Designed a clean, minimal interface with light/dark theme support and daily productivity reminders."
+      ],
+      logo: new URL('../assets/projects/analist.png', import.meta.url).href,
+      images: [
+        new URL('../assets/projects/analist1.png', import.meta.url).href
       ]
     }
   ]
