@@ -176,9 +176,10 @@ export const resumeData: ResumeData = {
         "Led UI/UX design and created 100+ system diagrams including use-case, activity, and ERD diagrams.",
         "Designed 200+ test cases and assisted with VPS deployment through Hostinger."
       ],
+      logo: new URL('../assets/projects/quizzle.png', import.meta.url).href,
       images: [
-        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?w=800&auto=format&fit=crop&q=80"
+        new URL('../assets/projects/quizzle2.png', import.meta.url).href,
+        new URL('../assets/projects/quizzle1.png', import.meta.url).href
       ]
     },
     {
@@ -210,9 +211,10 @@ export const resumeData: ResumeData = {
         "Implemented user authentication and vote validation logic.",
         "Designed an intuitive UI with Bootstrap and deployed on InfinityFree for testing and demonstration."
       ],
+      logo: new URL('../assets/projects/cicselect.png', import.meta.url).href,
       images: [
-        "https://images.unsplash.com/photo-1540910419892-4a36d2c3266c?w=800&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80"
+        new URL('../assets/projects/cicselect1.png', import.meta.url).href,
+        new URL('../assets/projects/cicselect2.png', import.meta.url).href
       ]
     },
     {
@@ -227,9 +229,10 @@ export const resumeData: ResumeData = {
         "Integrated Firestore for real-time data synchronization across devices.",
         "Designed an intuitive UI allowing users to manage tasks and events seamlessly."
       ],
+      logo: new URL('../assets/projects/summit.png', import.meta.url).href,
       images: [
-        "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=800&auto=format&fit=crop&q=80"
+        new URL('../assets/projects/summit1.png', import.meta.url).href,
+        new URL('../assets/projects/summit2.png', import.meta.url).href
       ]
     },
     {
@@ -244,9 +247,9 @@ export const resumeData: ResumeData = {
         "Designed a relational MySQL database to manage users, courses, and enrollments.",
         "Created a responsive interface tailored for Cupang Elementary School students."
       ],
+      logo: new URL('../assets/projects/projectmind.png', import.meta.url).href,
       images: [
-        "https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=800&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&auto=format&fit=crop&q=80"
+        new URL('../assets/projects/projectmind1.png', import.meta.url).href
       ]
     },
     {

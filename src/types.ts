@@ -44,6 +44,7 @@ export interface ProjectItem {
   role: string;
   hosting?: string;
   description: string[];
+  logo?: string;
   images?: string[];
 }
 

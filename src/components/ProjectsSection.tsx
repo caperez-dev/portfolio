@@ -112,10 +112,23 @@ function ProjectCard({ project, isCenter, position, maxVisible, onClick }: Proje
             </span>
           </div>
 
-          {/* Title */}
-          <h3 className="text-xl sm:text-2xl font-bold text-white mb-2.5 line-clamp-2">
-            {project.title}
-          </h3>
+          {/* Title + Logo */}
+          <div className="flex items-start gap-4 mb-2.5">
+            <h3 className="text-xl sm:text-2xl font-bold text-white line-clamp-2 min-w-0 flex-1">
+              {project.title}
+            </h3>
+            {project.logo && (
+              <img
+                src={project.logo}
+                alt={`${project.title} logo`}
+                className="shrink-0 w-14 h-14 sm:w-16 sm:h-16 object-contain"
+                title={project.title}
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).style.display = 'none';
+                }}
+              />
+            )}
+          </div>
 
           {/* Description Preview */}
           <p className="text-sm text-white/60 mb-5 line-clamp-2 leading-relaxed">
