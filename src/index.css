@@ -76,6 +76,19 @@ section {
   scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
 }
 
+@media (min-width: 768px) {
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+  html,
+  body {
+    scrollbar-width: none;
+  }
+}
+
 /* Chat Message Stream Scrollbar */
 .chat-scrollbar {
   scrollbar-width: thin;

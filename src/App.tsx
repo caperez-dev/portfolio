@@ -10,6 +10,7 @@ import { LoadingScreen } from './components/LoadingScreen';
 import { Navbar } from './components/Navbar';
 import { FloatingSidebar } from './components/FloatingSidebar';
 import { HeroBanner } from './components/HeroBanner';
+import { CustomScrollbar } from './components/CustomScrollbar';
 import { resumeData } from './data/resume';
 import { scrollToSection, getIsScrollingToSection } from './utils/scrollToSection';
 import { Sparkles } from 'lucide-react';
@@ -231,6 +232,9 @@ export default function App() {
         {/* Floating LinkedIn Sidebar */}
         <FloatingSidebar />
 
+        {/* Custom Rocket Scrollbar */}
+        <CustomScrollbar />
+
         {/* Main Sections */}
         <main className="relative z-10">
           <HeroBanner
@@ -313,9 +317,9 @@ export default function App() {
 
         {/* Footer */}
         <footer className="py-8 mt-12 border-t border-white/10 bg-[#0d0d0f]/60 backdrop-blur-xl relative z-10">
-          <div className="max-w-6xl mx-auto px-5 sm:px-8 lg:px-10 flex flex-col items-center gap-3">
+          <div className="max-w-6xl mx-auto px-5 sm:px-8 lg:px-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             {/* Copyright */}
-            <p className="text-xs font-medium text-white/50 tracking-wide">
+            <p className="text-xs font-medium text-white/50 tracking-wide text-left">
               © 2026 Carlos Alfonso Perez. All rights reserved.
             </p>
             
