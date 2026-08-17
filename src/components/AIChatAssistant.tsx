@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Sparkles, Send, X, Bot, User, ShieldCheck, Minimize2, Maximize2 } from 'lucide-react';
+import { Sparkles, Send, X, Bot, User, ShieldCheck, Minimize2, Maximize2, RefreshCw } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { ChatMessage, ThemeOption } from '../types';
@@ -13,20 +13,105 @@ interface AIChatAssistantProps {
   onClose: () => void;
 }
 
+const STORAGE_KEY = 'carlos-portfolio-ai-chat';
+const MAX_STORED_MESSAGES = 50;
+const STORAGE_EXPIRY_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+
+const formatTimestamp = () =>
+  new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+const makeWelcomeMessage = (): ChatMessage => ({
+  id: `welcome-${Date.now()}`,
+  sender: 'assistant',
+  text: "Hello! I am Carlos's AI Portfolio Assistant. Ask me anything about Carlos's UST degree, Henkel internship, technical skills, or capstone projects!",
+  timestamp: formatTimestamp()
+});
+
+const loadStoredMessages = (): ChatMessage[] | null => {
+  try {
+    if (typeof window === 'undefined' || !window.localStorage) return null;
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as {
+      version?: number;
+      updatedAt?: number;
+      messages?: unknown;
+    };
+
+    if (!parsed || !Array.isArray(parsed.messages)) return null;
+
+    if (typeof parsed.updatedAt === 'number') {
+      if (Date.now() - parsed.updatedAt > STORAGE_EXPIRY_MS) {
+        try {
+          window.localStorage.removeItem(STORAGE_KEY);
+        } catch {
+          /* ignore */
+        }
+        return null;
+      }
+    }
+
+    const hydrated = (parsed.messages as any[])
+      .filter(
+        (m) =>
+          m &&
+          typeof m.id === 'string' &&
+          (m.sender === 'user' || m.sender === 'assistant') &&
+          typeof m.text === 'string' &&
+          typeof m.timestamp === 'string'
+      )
+      .map<ChatMessage>((m) => ({
+        id: m.id,
+        sender: m.sender,
+        text: m.text,
+        timestamp: m.timestamp
+      }));
+
+    return hydrated.length > 0 ? hydrated.slice(-MAX_STORED_MESSAGES) : null;
+  } catch {
+    return null;
+  }
+};
+
+const saveMessagesToStorage = (messages: ChatMessage[]) => {
+  try {
+    if (typeof window === 'undefined' || !window.localStorage) return;
+    const capped = messages.slice(-MAX_STORED_MESSAGES);
+    const payload = {
+      version: 1,
+      updatedAt: Date.now(),
+      messages: capped.map((m) => ({
+        id: m.id,
+        sender: m.sender,
+        text: m.text,
+        timestamp: m.timestamp
+      }))
+    };
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  } catch {
+    /* quota / disabled storage — degrade to in-memory only */
+  }
+};
+
+const clearStoredMessages = () => {
+  try {
+    if (typeof window === 'undefined' || !window.localStorage) return;
+    window.localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    /* ignore */
+  }
+};
+
 export function AIChatAssistant({
   currentTheme,
   isDarkMode,
   isOpen,
   onClose
 }: AIChatAssistantProps) {
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: 'welcome',
-      sender: 'assistant',
-      text: "Hello! I am Carlos's AI Portfolio Assistant. Ask me anything about Carlos's UST degree, Henkel internship, technical skills, or capstone projects!",
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    }
-  ]);
+  const [messages, setMessages] = useState<ChatMessage[]>(() => {
+    const stored = loadStoredMessages();
+    return stored ?? [makeWelcomeMessage()];
+  });
 
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -50,6 +135,16 @@ export function AIChatAssistant({
     }
   }, [messages, isOpen]);
 
+  useEffect(() => {
+    saveMessagesToStorage(messages);
+  }, [messages]);
+
+  const handleClearChat = useCallback(() => {
+    clearStoredMessages();
+    setMessages([makeWelcomeMessage()]);
+    setInputText('');
+  }, []);
+
   const handleSendMessage = async (textToSend?: string) => {
     const text = textToSend || inputText;
     if (!text.trim() || isLoading) return;
@@ -58,7 +153,7 @@ export function AIChatAssistant({
       id: Date.now().toString(),
       sender: 'user',
       text: text.trim(),
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      timestamp: formatTimestamp()
     };
 
     setMessages((prev) => [...prev, userMsg]);
@@ -86,7 +181,7 @@ export function AIChatAssistant({
         id: (Date.now() + 1).toString(),
         sender: 'assistant',
         text: data.reply || "I'm sorry, I couldn't generate a response at this time.",
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        timestamp: formatTimestamp()
       };
 
       setMessages((prev) => [...prev, assistantMsg]);
@@ -101,7 +196,7 @@ export function AIChatAssistant({
           id: (Date.now() + 1).toString(),
           sender: 'assistant',
           text: friendlyMsg,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          timestamp: formatTimestamp()
         }
       ]);
     } finally {
@@ -148,6 +243,14 @@ export function AIChatAssistant({
 
           <div className="flex items-center gap-1">
             <motion.button
+              onClick={handleClearChat}
+              whileTap={{ scale: 0.88 }}
+              className="p-1.5 rounded-md hover:bg-white/10 text-slate-300 hover:text-white"
+              title="Start a new conversation"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+            </motion.button>
+            <motion.button
               onClick={() => setIsExpanded(!isExpanded)}
               whileTap={{ scale: 0.88 }}
               className="p-1.5 rounded-md hover:bg-white/10 text-slate-300 hover:text-white"
@@ -175,14 +278,18 @@ export function AIChatAssistant({
                 msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'
               }`}
             >
-              <div
-                className={`p-1.5 rounded-full shrink-0 ${
-                  msg.sender === 'user'
-                    ? 'bg-[#ff9500] text-black'
-                    : 'bg-white/[0.05] text-[#ff9500] border border-white/10'
-                }`}
-              >
-                {msg.sender === 'user' ? <User className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5" />}
+              <div className="shrink-0">
+                {msg.sender === 'user' ? (
+                  <div className="p-1.5 rounded-full bg-[#ff9500] text-black">
+                    <User className="w-3.5 h-3.5" />
+                  </div>
+                ) : (
+                  <img
+                    src={carlosBranding}
+                    alt="Carlos"
+                    className="w-7 h-7 rounded-full object-cover border border-white/10 shadow-sm"
+                  />
+                )}
               </div>
 
               <div

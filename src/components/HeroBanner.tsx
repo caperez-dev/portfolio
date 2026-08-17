@@ -13,6 +13,24 @@ interface HeroBannerProps {
   isDarkMode: boolean;
 }
 
+interface StatBlockProps {
+  value: string | number;
+  label: string;
+}
+
+function StatBlock({ value, label }: StatBlockProps) {
+  return (
+    <div className="flex flex-col items-start gap-0.5">
+      <div className="font-extrabold leading-none text-white" style={{ letterSpacing: '-0.03em', fontSize: 'clamp(2rem, 4vw, 2.75rem)' }}>
+        {value}
+      </div>
+      <div className="text-[11px] font-mono font-bold uppercase tracking-[0.16em] text-slate-400">
+        {label}
+      </div>
+    </div>
+  );
+}
+
 const TYPEWRITER_WORDS = ['Full-Stack Developer', 'Freelancer'];
 
 export function HeroBanner({ currentTheme, isDarkMode }: HeroBannerProps) {
@@ -234,6 +252,15 @@ export function HeroBanner({ currentTheme, isDarkMode }: HeroBannerProps) {
                 <Paperclip className="w-4 h-4 text-[#ff9500]" />
                 <span>My Resume</span>
               </button>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.82, ease: easeOutExpo }}
+              className="mt-7 flex items-center gap-8"
+            >
+              <StatBlock value={resumeData.projects.length} label="Projects" />
             </motion.div>
           </div>
 

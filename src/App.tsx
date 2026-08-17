@@ -305,7 +305,7 @@ export default function App() {
 
         {/* AI Chat Drawer / Widget */}
         {isChatOpen && (
-          <Suspense fallback={<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm text-white/80">Loading AI assistant…</div>}>
+          <Suspense fallback={null}>
             <AIChatAssistant
               currentTheme={currentTheme}
               isDarkMode={isDarkMode}
