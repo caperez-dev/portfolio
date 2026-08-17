@@ -109,7 +109,7 @@ export const resumeData: ResumeData = {
   education: [
     {
       institution: "University of Santo Tomas (UST)",
-      location: "Manila, Metro Manila",
+      location: "Sampaloc City, Metro Manila, Philippines",
       period: "Aug 2022 - Jun 2026",
       degree: "Bachelor of Science in Information Technology",
       gwa: "1.672",

@@ -241,13 +241,20 @@ export function ExperienceSection({ currentTheme, isDarkMode }: ExperienceSectio
                             </div>
                           </div>
 
-                          <div>
-                            <h3 className="text-base sm:text-lg md:text-xl font-bold text-slate-100 leading-snug">
-                              {edu.degree}
-                            </h3>
-                            <p className="text-xs sm:text-sm font-semibold text-[#ff9500] mt-0.5">
-                              {edu.institution}
-                            </p>
+                          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                            <div className="min-w-0">
+                              <h3 className="text-base sm:text-lg md:text-xl font-bold text-slate-100 leading-snug">
+                                {edu.degree}
+                              </h3>
+                              <p className="text-xs sm:text-sm font-semibold text-[#ff9500] mt-0.5">
+                                {edu.institution}
+                              </p>
+                            </div>
+                            {/* Location badge — orange-themed */}
+                            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#ff9500]/10 border border-[#ff9500]/20 text-[11px] text-slate-300 font-mono w-fit shrink-0">
+                              <MapPin className="w-3 h-3 text-[#ff9500]" />
+                              <span>{edu.location}</span>
+                            </div>
                           </div>
 
                           <p className="text-xs sm:text-sm text-slate-400">
