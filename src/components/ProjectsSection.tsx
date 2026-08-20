@@ -101,8 +101,8 @@ function ProjectCard({ project, isCenter, position, maxVisible, onClick }: Proje
 
         {/* Project Info */}
         <div className="p-5 sm:p-7 flex flex-col flex-grow">
-          {/* Category Badge */}
-          <div className="mb-3 flex items-center gap-1">
+          {/* Category Badge + Date Range */}
+          <div className="mb-3 flex items-center justify-between gap-2">
             <span className="px-3 py-1 rounded-md text-[11px] font-mono font-bold uppercase tracking-wider bg-[#ff9500]/12 text-[#ff9500] border border-[#ff9500]/30 flex items-center gap-1.5 w-fit">
               {project.category === 'capstone' && <Sparkles className="w-3.5 h-3.5" />}
               {project.category === 'web' && <Globe className="w-3.5 h-3.5" />}
@@ -110,6 +110,11 @@ function ProjectCard({ project, isCenter, position, maxVisible, onClick }: Proje
               {project.category === 'system' && <Server className="w-3.5 h-3.5" />}
               <span>{project.subtitle}</span>
             </span>
+            {project.dateRange && (
+              <span className="text-[11px] font-mono text-white/40 whitespace-nowrap shrink-0">
+                {project.dateRange}
+              </span>
+            )}
           </div>
 
           {/* Title + Logo */}

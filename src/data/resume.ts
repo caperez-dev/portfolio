@@ -170,6 +170,7 @@ export const resumeData: ResumeData = {
       subtitle: "Web Application",
       category: "web",
       technologies: ["React.js", "Firebase Firestore", "Node.js", "Express.js", "Web Sockets (Socket.io)", "LLaMA 3.3 70B"],
+      dateRange: "Jun 2025 – Nov 2025",
       role: "Project Manager, UI/UX Design, Backend Development, System Documentation",
       description: [
         "Managed a 4-member Agile team to plan and build the platform.",
@@ -188,6 +189,7 @@ export const resumeData: ResumeData = {
       subtitle: "Web Application",
       category: "web",
       technologies: ["HTML", "Bootstrap CSS", "JavaScript", "PHP", "MySQL Database"],
+      dateRange: "Feb 2025 – Jun 2025",
       role: "UI/UX Design, Backend Development, System Documentation",
       description: [
         "Executed complete development lifecycle from front-end to back-end.",
@@ -205,6 +207,7 @@ export const resumeData: ResumeData = {
       subtitle: "Web Application",
       category: "web",
       technologies: ["HTML", "Bootstrap", "PHP Laravel Framework", "MySQL Database"],
+      dateRange: "Nov 2025 – Dec 2025",
       role: "UI/UX Design, Backend Development, System Documentation",
       description: [
         "Developed a secure online voting platform using PHP Laravel and MySQL.",
@@ -223,6 +226,7 @@ export const resumeData: ResumeData = {
       subtitle: "Mobile Application",
       category: "mobile",
       technologies: ["Flutter", "Dart", "Firestore Database (Firebase)"],
+      dateRange: "Apr 2026 – May 2026",
       role: "UI/UX Design, Backend Development, System Documentation",
       description: [
         "Managed a 4-member team and built an Android mobile application using Flutter and Dart.",
@@ -241,6 +245,7 @@ export const resumeData: ResumeData = {
       subtitle: "Web Application",
       category: "web",
       technologies: ["ReactJS", "Express.js", "Node.js", "MySQL Database"],
+      dateRange: "May 2025 – Jun 2025",
       role: "UI/UX Design, Backend Development",
       description: [
         "Developed a learning management system using ReactJS for front-end and Express.js with Node.js for back-end.",
@@ -258,6 +263,7 @@ export const resumeData: ResumeData = {
       subtitle: "Web Application",
       category: "web",
       technologies: ["AngularJS", "ASP.NET Framework", "MySQL Database"],
+      dateRange: "Nov 2024 – Dec 2024",
       role: "UI/UX Design, Backend Development",
       description: [
         "Built an inventory management system using AngularJS and ASP.NET Framework.",
@@ -275,11 +281,10 @@ export const resumeData: ResumeData = {
       subtitle: "Web Application",
       category: "web",
       technologies: ["PHP", "MySQL Database"],
+      dateRange: "May 2024 – Jun 2024",
       role: "Full-Stack Development, UI/UX Design, System Documentation",
       description: [
-        "Developed a full-stack resort reservation platform with real-time room availability tracking.",
-        "Integrated secure payment processing through Stripe and designed an intuitive booking flow for guests.",
-        "Built an admin dashboard for managing reservations, room assignments, and customer inquiries."
+        "Developed a web-based resort reservation system that streamlines booking operations, enabling users to reserve accommodations, manage schedules, and track availability in real time."
       ],
       logo: new URL('../assets/projects/elysian.png', import.meta.url).href,
       images: [
@@ -291,12 +296,11 @@ export const resumeData: ResumeData = {
       title: "Analist: To-Do List Mobile App",
       subtitle: "Mobile Application",
       category: "mobile",
-      technologies: ["Flutter", "Dart", "SQLite", "Provider State Management"],
+      technologies: ["Kotlin", "Firebase"],
+      dateRange: "Nov 2024 – Dec 2024",
       role: "Mobile Development, UI/UX Design",
       description: [
-        "Built a cross-platform to-do list mobile app with offline-first architecture using SQLite.",
-        "Implemented category tagging, priority levels, and swipe-to-delete gestures for quick task management.",
-        "Designed a clean, minimal interface with light/dark theme support and daily productivity reminders."
+        "Built an Android to-do list mobile application using Kotlin, integrated Firebase Firestore for real-time task synchronization, and designed an intuitive UI for creating, organizing, and tracking daily tasks."
       ],
       logo: new URL('../assets/projects/analist.png', import.meta.url).href,
       images: [
