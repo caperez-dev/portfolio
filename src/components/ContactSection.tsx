@@ -9,6 +9,30 @@ import {
   ArrowLeft
 } from 'lucide-react';
 
+// Convert flag emoji → ISO 3166-1 alpha-2 code → flagcdn.com image URL
+// Each flag emoji is two regional indicator letters (U+1F1E6–U+1F1FF)
+function flagEmojiToIso(flag: string): string {
+  return [...flag]
+    .map((c) => String.fromCharCode(c.codePointAt(0)! - 0x1F1E6 + 65))
+    .join('')
+    .toLowerCase();
+}
+
+function FlagImg({ flag, className = '' }: { flag: string; className?: string }) {
+  const iso = flagEmojiToIso(flag);
+  return (
+    <img
+      src={`https://flagcdn.com/w20/${iso}.png`}
+      srcSet={`https://flagcdn.com/w40/${iso}.png 2x`}
+      alt=""
+      aria-hidden="true"
+      className={`inline-block object-cover ${className}`}
+      style={{ width: '20px', height: '14px' }}
+      onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+    />
+  );
+}
+
 interface ContactSectionProps {
   currentTheme: ThemeOption;
   isDarkMode: boolean;
@@ -354,7 +378,7 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
                             fieldErrors.phone ? 'border-red-500' : 'border-white/10 focus:border-[#ff9500]/50 focus:ring-1 focus:ring-[#ff9500]/40'
                           } bg-white/[0.04] text-white`}
                         >
-                          <span>{selectedCountry.flag}</span>
+                          <FlagImg flag={selectedCountry.flag} className="shrink-0 rounded-sm" />
                           <span>{selectedCountry.dialCode}</span>
                         </button>
                         {isCountryDropdownOpen && (
@@ -364,9 +388,10 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
                                 key={country.dialCode + country.name}
                                 type="button"
                                 onClick={() => { setCountryCode(country.dialCode); setIsCountryDropdownOpen(false); }}
-                                className="w-full px-3 py-2 text-left text-xs text-white hover:bg-white/[0.04]"
+                                className="w-full px-3 py-2 text-left text-xs text-white hover:bg-white/[0.04] flex items-center gap-2"
                               >
-                                {country.flag} {country.name}
+                                <FlagImg flag={country.flag} className="shrink-0 rounded-sm" />
+                                <span>{country.name}</span>
                               </button>
                             ))}
                           </div>
