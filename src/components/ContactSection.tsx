@@ -33,6 +33,10 @@ function FlagImg({ flag, className = '' }: { flag: string; className?: string })
   );
 }
 
+// Same font stack used in the Navbar for visual consistency
+const appleFontStack =
+  "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Helvetica Neue', sans-serif";
+
 interface ContactSectionProps {
   currentTheme: ThemeOption;
   isDarkMode: boolean;
@@ -258,6 +262,7 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
                   ? `${currentTheme.darkCard} ${currentTheme.darkBorder}`
                   : `${currentTheme.lightCard} ${currentTheme.lightBorder}`
               }`}
+              style={{ fontFamily: appleFontStack }}
             >
               {/* Availability badge */}
               <div className="flex items-center gap-2 mb-6">
@@ -306,18 +311,19 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
                   ? `${currentTheme.darkCard} ${currentTheme.darkBorder}`
                   : `${currentTheme.lightCard} ${currentTheme.lightBorder}`
               }`}
+              style={{ fontFamily: appleFontStack }}
             >
               {/* Back button */}
               <button
                 onClick={() => setShowForm(false)}
-                className="flex items-center gap-1.5 text-[11px] font-mono text-white/50 hover:text-white/80 transition-colors mb-5"
+                className="flex items-center gap-1.5 text-[11px] text-white/50 hover:text-white/80 transition-colors mb-5"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 Back
               </button>
 
               {submitResult && (
-                <div className={`p-4 rounded-xl mb-6 text-xs font-mono flex items-start gap-3 border ${
+                <div className={`p-4 rounded-xl mb-6 text-xs flex items-start gap-3 border ${
                   submitResult.success
                     ? 'border-[#ff9500]/30 bg-[#ff9500]/10'
                     : 'border-orange-500/30 bg-orange-500/10'
@@ -334,7 +340,7 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Full Name */}
                   <div>
-                    <label className="block text-xs font-mono font-medium text-white/80 mb-1">
+                    <label className="block text-xs font-medium text-white/80 mb-1">
                       Full Name <span className="text-[#ff9500]">*</span>
                     </label>
                     <input
@@ -349,7 +355,7 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
 
                   {/* Email */}
                   <div>
-                    <label className="block text-xs font-mono font-medium text-white/80 mb-1">
+                    <label className="block text-xs font-medium text-white/80 mb-1">
                       Email Address <span className="text-[#ff9500]">*</span>
                     </label>
                     <input
@@ -366,7 +372,7 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Phone */}
                   <div>
-                    <label className="block text-xs font-mono font-medium text-white/80 mb-1">
+                    <label className="block text-xs font-medium text-white/80 mb-1">
                       Mobile / Phone <span className="text-white/35 font-normal">(Optional)</span>
                     </label>
                     <div className="flex items-stretch gap-2">
@@ -410,7 +416,7 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
 
                   {/* Subject */}
                   <div>
-                    <label className="block text-xs font-mono font-medium text-white/80 mb-1">
+                    <label className="block text-xs font-medium text-white/80 mb-1">
                       Subject <span className="text-[#ff9500]">*</span>
                     </label>
                     <input

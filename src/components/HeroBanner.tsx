@@ -160,7 +160,7 @@ export function HeroBanner({ currentTheme, isDarkMode }: HeroBannerProps) {
               className="space-y-2 mb-6"
             >
               <motion.p variants={itemVariants} className="text-2xl font-semibold tracking-tight text-[#ff9500]">
-                Hi, my name is
+                Hi, I'm
               </motion.p>
 
               <motion.h1
