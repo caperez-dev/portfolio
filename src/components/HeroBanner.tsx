@@ -31,7 +31,7 @@ function StatBlock({ value, label }: StatBlockProps) {
   );
 }
 
-const TYPEWRITER_WORDS = ['Full-Stack Developer', 'Freelancer'];
+const TYPEWRITER_WORDS = ['Full-Stack Developer', 'Tech & Automation VA for Digital Agencies'];
 
 export function HeroBanner({ currentTheme, isDarkMode }: HeroBannerProps) {
   const [wordIdx, setWordIdx] = useState(0);
