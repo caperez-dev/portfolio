@@ -108,7 +108,7 @@ function ProjectCard({ project, isCenter, position, maxVisible, onClick, onWatch
                 className="absolute bottom-3 right-3 inline-flex items-center justify-center rounded-full border border-[#ff9500]/60 bg-black/50 backdrop-blur-sm text-[#ff9500] hover:bg-[#ff9500]/30 hover:text-[#ffb340] hover:border-[#ff9500] transition-all w-10 h-10 shadow-xl shadow-black/40 hover:scale-110 active:scale-95 z-10"
                 aria-label="Watch demo video"
               >
-                <Play className="w-4 h-4 fill-current translate-x-0.5" />
+                <Play className="w-4 h-4 fill-current" />
               </button>
             )}
           </div>
@@ -185,10 +185,14 @@ export function ProjectsSection({ currentTheme, isDarkMode }: ProjectsSectionPro
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  // Pause video when modal closes
+  // Play when modal opens, pause when it closes
   useEffect(() => {
-    if (!showVideoModal && videoRef.current) {
-      videoRef.current.pause();
+    if (showVideoModal) {
+      // Small delay to let the modal animate in before playing
+      const t = setTimeout(() => { videoRef.current?.play(); }, 150);
+      return () => clearTimeout(t);
+    } else {
+      videoRef.current?.pause();
     }
   }, [showVideoModal]);
 
