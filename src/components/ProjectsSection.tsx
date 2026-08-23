@@ -15,6 +15,18 @@ import {
 } from 'lucide-react';
 
 const quizzleVideo = new URL('../assets/projects/quizzle_video.mp4', import.meta.url).href;
+const summitVideo = new URL('../assets/projects/summit_video.mp4', import.meta.url).href;
+
+const projectVideos: Record<string, { src: string; title: string }> = {
+  quizzle: {
+    src: quizzleVideo,
+    title: 'Quizzle: An AI-driven Web App for Personalized Online Learning',
+  },
+  summit: {
+    src: summitVideo,
+    title: 'Summit: To-Do List & Calendar Mobile App',
+  },
+};
 
 interface ProjectsSectionProps {
   currentTheme: ThemeOption;
@@ -174,27 +186,28 @@ function ProjectCard({ project, isCenter, position, maxVisible, onClick, onWatch
 export function ProjectsSection({ currentTheme, isDarkMode }: ProjectsSectionProps) {
   const projects = resumeData.projects;
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [showVideoModal, setShowVideoModal] = useState(false);
+  const [activeVideoProject, setActiveVideoProject] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const maxVisible = 5;
+  const activeVideo = activeVideoProject ? projectVideos[activeVideoProject] : null;
 
   // Close on Esc
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setShowVideoModal(false); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setActiveVideoProject(null); };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
   // Play when modal opens, pause when it closes
   useEffect(() => {
-    if (showVideoModal) {
+    if (activeVideoProject) {
       // Small delay to let the modal animate in before playing
       const t = setTimeout(() => { videoRef.current?.play(); }, 150);
       return () => clearTimeout(t);
     } else {
       videoRef.current?.pause();
     }
-  }, [showVideoModal]);
+  }, [activeVideoProject]);
 
   const handlePrev = () => {
     setCurrentIndex((prev) => (prev === 0 ? projects.length - 1 : prev - 1));
@@ -261,7 +274,7 @@ export function ProjectsSection({ currentTheme, isDarkMode }: ProjectsSectionPro
                       isCenter={position === 0}
                       position={position}
                       maxVisible={maxVisible}
-                      onWatchDemo={project.id === 'quizzle' ? () => setShowVideoModal(true) : undefined}
+                      onWatchDemo={projectVideos[project.id] ? () => setActiveVideoProject(project.id) : undefined}
                       onClick={() => {
                         if (position !== 0) handleDotClick(idx);
                       }}
@@ -311,14 +324,14 @@ export function ProjectsSection({ currentTheme, isDarkMode }: ProjectsSectionPro
         </div>
       </div>
 
-      {/* Quizzle demo video modal */}
+      {/* Project demo video modal */}
       <AnimatePresence>
-        {showVideoModal && (
+        {activeVideo && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setShowVideoModal(false)}
+            onClick={() => setActiveVideoProject(null)}
             className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-6"
           >
             <motion.div
@@ -331,10 +344,10 @@ export function ProjectsSection({ currentTheme, isDarkMode }: ProjectsSectionPro
               {/* Header */}
               <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/8">
                 <span className="text-sm font-bold text-white">
-                  Quizzle: An AI-driven Web App for Personalized Online Learning
+                  {activeVideo.title}
                 </span>
                 <button
-                  onClick={() => setShowVideoModal(false)}
+                  onClick={() => setActiveVideoProject(null)}
                   className="p-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-white/60 hover:text-white transition-colors"
                   aria-label="Close video modal"
                 >
@@ -346,7 +359,7 @@ export function ProjectsSection({ currentTheme, isDarkMode }: ProjectsSectionPro
               <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#141414] aspect-video">
                 <video
                   ref={videoRef}
-                  src={quizzleVideo}
+                  src={activeVideo.src}
                   controls
                   className="w-full h-full object-contain"
                   preload="metadata"
