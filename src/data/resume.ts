@@ -229,13 +229,13 @@ export const resumeData: ResumeData = {
       dateRange: "Apr 2026 – May 2026",
       role: "UI/UX Design, Backend Development, System Documentation",
       description: [
-        "Managed a 4-member team and built an Android mobile application using Flutter and Dart.",
+        "Managed a 3-member team and built an Android mobile application using Flutter and Dart.",
         "Integrated Firestore for real-time data synchronization across devices.",
         "Designed an intuitive UI allowing users to manage tasks and events seamlessly."
       ],
       logo: new URL('../assets/projects/summit.png', import.meta.url).href,
       images: [
-        new URL('../assets/projects/summit1.png', import.meta.url).href,
+        new URL('../assets/projects/summit1.gif', import.meta.url).href,
         new URL('../assets/projects/summit2.png', import.meta.url).href
       ]
     },

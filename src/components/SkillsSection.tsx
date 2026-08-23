@@ -4,6 +4,9 @@ import { resumeData } from '../data/resume';
 import { ThemeOption } from '../types';
 import { Code2 } from 'lucide-react';
 
+const appleFontStack =
+  "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Helvetica Neue', sans-serif";
+
 interface SkillsSectionProps {
   currentTheme: ThemeOption;
   isDarkMode: boolean;
@@ -82,7 +85,7 @@ export function SkillsSection({ currentTheme, isDarkMode }: SkillsSectionProps) 
     : allSkills.filter((s) => s.filterCategory === activeFilter);
 
   return (
-    <section id="skills" className="py-12 sm:py-16 border-t border-white/8 relative scroll-mt-16">
+    <section id="skills" className="py-12 sm:py-16 border-t border-white/8 relative scroll-mt-16" style={{ fontFamily: appleFontStack }}>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Section Heading */}
@@ -122,7 +125,7 @@ export function SkillsSection({ currentTheme, isDarkMode }: SkillsSectionProps) 
                 <button
                   key={filter.id}
                   onClick={() => setActiveFilter(filter.id)}
-                  className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-semibold whitespace-nowrap transition-all duration-200 border ${
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all duration-200 border ${
                     isActive
                       ? 'bg-[#ff9500] border-[#ff9500] text-black shadow-lg shadow-[#ff9500]/25'
                       : 'bg-transparent border-white/15 text-white/55 hover:border-[#ff9500]/40 hover:text-white/80'

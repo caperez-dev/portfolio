@@ -55,7 +55,7 @@ export function CertificationsSection({ currentTheme, isDarkMode }: Certificatio
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/[0.04] text-[#ff9500]">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl text-[#ff9500]">
                     {cert.title.includes('PHILNITS') ? (
                       <img src={philnitsLogo} alt="PHILNITS logo" className="h-8 w-8 object-contain" />
                     ) : cert.issuer.includes('Henkel') ? (

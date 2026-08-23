@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { motion } from 'motion/react';
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { resumeData } from '../data/resume';
 import { ThemeOption } from '../types';
 import {
@@ -9,8 +9,12 @@ import {
   Globe,
   Smartphone,
   Sparkles,
-  Server
+  Server,
+  Play,
+  X
 } from 'lucide-react';
+
+const quizzleVideo = new URL('../assets/projects/quizzle_video.mp4', import.meta.url).href;
 
 interface ProjectsSectionProps {
   currentTheme: ThemeOption;
@@ -23,9 +27,10 @@ interface ProjectCardProps {
   position: number;
   maxVisible: number;
   onClick: () => void;
+  onWatchDemo?: () => void;
 }
 
-function ProjectCard({ project, isCenter, position, maxVisible, onClick }: ProjectCardProps) {
+function ProjectCard({ project, isCenter, position, maxVisible, onClick, onWatchDemo }: ProjectCardProps) {
   const distance = Math.abs(position);
 
   const getScale = () => {
@@ -96,6 +101,16 @@ function ProjectCard({ project, isCenter, position, maxVisible, onClick }: Proje
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#1c1c1e]/80" />
+            {onWatchDemo && (
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); onWatchDemo(); }}
+                className="absolute bottom-3 right-3 inline-flex items-center justify-center rounded-full border border-[#ff9500]/60 bg-black/50 backdrop-blur-sm text-[#ff9500] hover:bg-[#ff9500]/30 hover:text-[#ffb340] hover:border-[#ff9500] transition-all w-10 h-10 shadow-xl shadow-black/40 hover:scale-110 active:scale-95 z-10"
+                aria-label="Watch demo video"
+              >
+                <Play className="w-4 h-4 fill-current translate-x-0.5" />
+              </button>
+            )}
           </div>
         )}
 
@@ -135,8 +150,7 @@ function ProjectCard({ project, isCenter, position, maxVisible, onClick }: Proje
             )}
           </div>
 
-          {/* Description Preview */}
-          <p className="text-sm text-white/60 mb-5 line-clamp-2 leading-relaxed">
+          <p className="text-sm text-white/60 mb-5 leading-relaxed">
             {project.description[0]}
           </p>
 
@@ -160,7 +174,23 @@ function ProjectCard({ project, isCenter, position, maxVisible, onClick }: Proje
 export function ProjectsSection({ currentTheme, isDarkMode }: ProjectsSectionProps) {
   const projects = resumeData.projects;
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [showVideoModal, setShowVideoModal] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const maxVisible = 5;
+
+  // Close on Esc
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setShowVideoModal(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  // Pause video when modal closes
+  useEffect(() => {
+    if (!showVideoModal && videoRef.current) {
+      videoRef.current.pause();
+    }
+  }, [showVideoModal]);
 
   const handlePrev = () => {
     setCurrentIndex((prev) => (prev === 0 ? projects.length - 1 : prev - 1));
@@ -205,7 +235,7 @@ export function ProjectsSection({ currentTheme, isDarkMode }: ProjectsSectionPro
         {/* Carousel wrapper — overflow hidden so side cards clip cleanly */}
         <div className="relative overflow-hidden">
           {/* Track: tall enough for the full-size card */}
-          <div className="relative w-full h-[480px] sm:h-[580px] lg:h-[660px] flex items-center justify-center">
+          <div className="relative w-full min-h-[480px] sm:min-h-[580px] lg:min-h-[660px] flex items-center justify-center">
             <div
               style={{
                 perspective: '1500px',
@@ -227,6 +257,7 @@ export function ProjectsSection({ currentTheme, isDarkMode }: ProjectsSectionPro
                       isCenter={position === 0}
                       position={position}
                       maxVisible={maxVisible}
+                      onWatchDemo={project.id === 'quizzle' ? () => setShowVideoModal(true) : undefined}
                       onClick={() => {
                         if (position !== 0) handleDotClick(idx);
                       }}
@@ -275,6 +306,55 @@ export function ProjectsSection({ currentTheme, isDarkMode }: ProjectsSectionPro
           ))}
         </div>
       </div>
+
+      {/* Quizzle demo video modal */}
+      <AnimatePresence>
+        {showVideoModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowVideoModal(false)}
+            className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-6"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-[#1c1c1e] border border-white/10 rounded-3xl p-4 sm:p-6 max-w-3xl w-full flex flex-col shadow-2xl"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/8">
+                <span className="text-sm font-bold text-white">
+                  Quizzle: An AI-driven Web App for Personalized Online Learning
+                </span>
+                <button
+                  onClick={() => setShowVideoModal(false)}
+                  className="p-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-white/60 hover:text-white transition-colors"
+                  aria-label="Close video modal"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Video */}
+              <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#141414] aspect-video">
+                <video
+                  ref={videoRef}
+                  src={quizzleVideo}
+                  controls
+                  className="w-full h-full object-contain"
+                  preload="metadata"
+                />
+              </div>
+
+              <p className="pt-3 text-center text-xs font-mono text-white/60">
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
