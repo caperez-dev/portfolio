@@ -3,98 +3,27 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect, useRef, lazy, Suspense, type MouseEvent, type ReactNode } from 'react';
+import { useState, useEffect, useRef, lazy, Suspense, type MouseEvent } from 'react';
 import { developerThemes } from './data/themes';
 import { ThemeOption } from './types';
 import { LoadingScreen } from './components/LoadingScreen';
 import { Navbar } from './components/Navbar';
 import { FloatingSidebar } from './components/FloatingSidebar';
 import { HeroBanner } from './components/HeroBanner';
+import { ProjectsSection } from './components/ProjectsSection';
+import { SkillsSection } from './components/SkillsSection';
+import { ExperienceSection } from './components/ExperienceSection';
+import { CertificationsSection } from './components/CertificationsSection';
+import { ContactSection } from './components/ContactSection';
 import { CustomScrollbar } from './components/CustomScrollbar';
 import { resumeData } from './data/resume';
 import { scrollToSection, getIsScrollingToSection } from './utils/scrollToSection';
 import { Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
-const ProjectsSection = lazy(() =>
-  import('./components/ProjectsSection').then((mod) => ({ default: mod.ProjectsSection }))
-);
-const SkillsSection = lazy(() =>
-  import('./components/SkillsSection').then((mod) => ({ default: mod.SkillsSection }))
-);
-const ExperienceSection = lazy(() =>
-  import('./components/ExperienceSection').then((mod) => ({ default: mod.ExperienceSection }))
-);
-const CertificationsSection = lazy(() =>
-  import('./components/CertificationsSection').then((mod) => ({ default: mod.CertificationsSection }))
-);
-const ContactSection = lazy(() =>
-  import('./components/ContactSection').then((mod) => ({ default: mod.ContactSection }))
-);
 const AIChatAssistant = lazy(() =>
   import('./components/AIChatAssistant').then((mod) => ({ default: mod.AIChatAssistant }))
 );
-
-function LazySection({
-  children,
-  rootMargin = '0px 0px 320px 0px',
-  placeholder,
-}: {
-  children: ReactNode;
-  rootMargin?: string;
-  placeholder: ReactNode;
-}) {
-  const sectionRef = useRef<HTMLDivElement | null>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    if (isVisible || !sectionRef.current || typeof IntersectionObserver === 'undefined') return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin, threshold: 0.04 }
-    );
-
-    observer.observe(sectionRef.current);
-    return () => observer.disconnect();
-  }, [isVisible, rootMargin]);
-
-  return (
-    <div ref={sectionRef} className="min-h-[520px] relative">
-      <AnimatePresence mode="wait">
-        {isVisible ? (
-          <motion.div
-            key="content"
-            initial={{ opacity: 0, y: 48, filter: 'blur(14px)' }}
-            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            transition={{
-              duration: 0.9,
-              ease: [0.22, 1, 0.36, 1],
-              staggerChildren: 0.06,
-            }}
-          >
-            {children}
-          </motion.div>
-        ) : (
-          <motion.div
-            key="skeleton"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="min-h-[520px]"
-          >
-            {placeholder}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -242,35 +171,11 @@ export default function App() {
             isDarkMode={isDarkMode}
           />
 
-          <LazySection placeholder={<div className="min-h-[520px] flex items-center justify-center text-white/40 text-sm">Loading projects…</div>}>
-            <Suspense fallback={<div className="min-h-[520px] flex items-center justify-center text-white/40 text-sm">Loading projects…</div>}>
-              <ProjectsSection currentTheme={currentTheme} isDarkMode={isDarkMode} />
-            </Suspense>
-          </LazySection>
-
-          <LazySection placeholder={<div className="min-h-[520px] flex items-center justify-center text-white/40 text-sm">Loading skills…</div>}>
-            <Suspense fallback={<div className="min-h-[520px] flex items-center justify-center text-white/40 text-sm">Loading skills…</div>}>
-              <SkillsSection currentTheme={currentTheme} isDarkMode={isDarkMode} />
-            </Suspense>
-          </LazySection>
-
-          <LazySection placeholder={<div className="min-h-[520px] flex items-center justify-center text-white/40 text-sm">Loading experience…</div>}>
-            <Suspense fallback={<div className="min-h-[520px] flex items-center justify-center text-white/40 text-sm">Loading experience…</div>}>
-              <ExperienceSection currentTheme={currentTheme} isDarkMode={isDarkMode} />
-            </Suspense>
-          </LazySection>
-
-          <LazySection placeholder={<div className="min-h-[520px] flex items-center justify-center text-white/40 text-sm">Loading certifications…</div>}>
-            <Suspense fallback={<div className="min-h-[520px] flex items-center justify-center text-white/40 text-sm">Loading certifications…</div>}>
-              <CertificationsSection currentTheme={currentTheme} isDarkMode={isDarkMode} />
-            </Suspense>
-          </LazySection>
-
-          <LazySection placeholder={<div className="min-h-[520px] flex items-center justify-center text-white/40 text-sm">Loading contact…</div>}>
-            <Suspense fallback={<div className="min-h-[520px] flex items-center justify-center text-white/40 text-sm">Loading contact…</div>}>
-              <ContactSection currentTheme={currentTheme} isDarkMode={isDarkMode} />
-            </Suspense>
-          </LazySection>
+          <ProjectsSection currentTheme={currentTheme} isDarkMode={isDarkMode} />
+          <SkillsSection currentTheme={currentTheme} isDarkMode={isDarkMode} />
+          <ExperienceSection currentTheme={currentTheme} isDarkMode={isDarkMode} />
+          <CertificationsSection currentTheme={currentTheme} isDarkMode={isDarkMode} />
+          <ContactSection currentTheme={currentTheme} isDarkMode={isDarkMode} />
         </main>
 
         {/* Floating AI Assistant Toggle Button (Bottom Right) */}

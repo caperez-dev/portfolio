@@ -48,7 +48,7 @@ export function HeroBanner({ currentTheme, isDarkMode }: HeroBannerProps) {
       setIsDeleting(false);
       setWordIdx((prev) => (prev + 1) % TYPEWRITER_WORDS.length);
     } else {
-      const speed = isDeleting ? 45 : 95;
+      const speed = isDeleting ? 25 : 55;
       timer = setTimeout(() => {
         setDisplayedText((prev) =>
           isDeleting
