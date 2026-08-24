@@ -3,6 +3,9 @@ import { resumeData } from '../data/resume';
 import { ThemeOption } from '../types';
 import { Briefcase, Calendar, MapPin, CheckCircle2, Terminal, Building2, GraduationCap, Award, BookOpen } from 'lucide-react';
 
+const appleFontStack =
+  "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Helvetica Neue', sans-serif";
+
 const henkelLogo = new URL('../assets/work-education/henkel.png', import.meta.url).href;
 const ustLogo = new URL('../assets/work-education/ust.png', import.meta.url).href;
 const dlslLogo = new URL('../assets/work-education/dlsl.png', import.meta.url).href;
@@ -14,7 +17,7 @@ interface ExperienceSectionProps {
 
 export function ExperienceSection({ currentTheme, isDarkMode }: ExperienceSectionProps) {
   return (
-    <section id="experience" className="py-12 sm:py-16 border-t border-slate-800/40 relative scroll-mt-16">
+    <section id="experience" className="py-12 sm:py-16 border-t border-slate-800/40 relative scroll-mt-16" style={{ fontFamily: appleFontStack }}>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}
         <motion.div
