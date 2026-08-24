@@ -26,6 +26,16 @@ export function Navbar({
   onNavigate
 }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMenuPanelVisible, setIsMenuPanelVisible] = useState(false);
+
+  const openMobileMenu = () => {
+    setIsMenuPanelVisible(true);
+    setIsMobileMenuOpen(true);
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+  };
 
   const navLinks = [
     { name: 'Home', href: '#home' },
@@ -37,15 +47,15 @@ export function Navbar({
   ];
 
   const handleNavClick = (href: string) => {
-    setIsMobileMenuOpen(false);
+    closeMobileMenu();
     onNavigate(href.replace('#', ''));
   };
 
   return (
     <header
       id="main-navbar"
-      className={`fixed top-3 sm:top-4 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-1.5rem)] max-w-[900px] sm:w-[min(900px,78vw)] overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.25)] ${
-        isMobileMenuOpen ? 'rounded-2xl' : 'rounded-full'
+      className={`fixed top-3 sm:top-4 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-1.5rem)] max-w-[900px] sm:w-[min(900px,78vw)] overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.25)] lg:rounded-full ${
+        isMenuPanelVisible ? 'rounded-2xl' : 'rounded-full'
       }`}
       style={{
         background: 'rgba(28, 28, 30, 0.72)',
@@ -127,7 +137,7 @@ export function Navbar({
         <div className="flex items-center gap-2">
           {/* Mobile Menu Toggle */}
           <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            onClick={() => (isMobileMenuOpen ? closeMobileMenu() : openMobileMenu())}
             className="lg:hidden flex-shrink-0 p-1.5 rounded-md text-white/70 hover:text-white hover:bg-white/5 transition-colors duration-200"
             id="mobile-menu-btn"
             aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
@@ -158,7 +168,7 @@ export function Navbar({
       </div>
 
       {/* Mobile Menu Overlay */}
-      <AnimatePresence>
+      <AnimatePresence onExitComplete={() => setIsMenuPanelVisible(false)}>
         {isMobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}

@@ -52,6 +52,7 @@ const skillLogoMap: Record<string, string> = {
   lucidchart:    new URL('../assets/skills/lucidchart.png',     import.meta.url).href,
   java:          new URL('../assets/skills/java.png',           import.meta.url).href,
   javascript:    new URL('../assets/skills/javascript.png',     import.meta.url).href,
+  typescript:    new URL('../assets/skills/typescript.png',     import.meta.url).href,
   laravel:       new URL('../assets/skills/phplaravel.png',     import.meta.url).href,
   materializecss:new URL('../assets/skills/materializecss.png', import.meta.url).href,
   mysql:         new URL('../assets/skills/mysqlworkbench.png', import.meta.url).href,
@@ -181,7 +182,7 @@ export function SkillsSection({ currentTheme, isDarkMode }: SkillsSectionProps) 
               <motion.div
                 layout
                 transition={{ layout: { duration: 0.3, ease: 'easeInOut' } }}
-                className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5"
+                className="grid grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3.5"
               >
                 <AnimatePresence mode="popLayout" initial={false}>
                   {filteredSkills.map((skill) => (
@@ -196,16 +197,16 @@ export function SkillsSection({ currentTheme, isDarkMode }: SkillsSectionProps) 
                         opacity: { duration: 0.18 },
                         scale:   { duration: 0.18 }
                       }}
-                      className={`flex flex-col items-center justify-center p-3.5 rounded-xl border transition-colors text-center gap-2 group ${
+                      className={`flex flex-col items-center justify-center p-2 sm:p-3.5 rounded-xl border transition-colors text-center gap-1.5 sm:gap-2 group ${
                         isDarkMode
                           ? 'bg-[#1c1c1e]/80 border-white/10 hover:border-[#ff9500]/50 hover:bg-[#1c1c1e] hover:shadow-lg hover:shadow-[#ff9500]/20'
                           : 'bg-white/5 border border-white/10 hover:border-[#ff9500]/50 hover:bg-white/10'
                       }`}
                     >
-                      <div className="w-10 aspect-square flex items-center justify-center rounded-md overflow-hidden transition-transform duration-200 group-hover:scale-110 bg-white/[0.04]">
+                      <div className="w-8 sm:w-10 aspect-square flex items-center justify-center rounded-md overflow-hidden transition-transform duration-200 group-hover:scale-110 bg-white/[0.04]">
                         {getSkillIcon(skill.name, skill.logoKey)}
                       </div>
-                      <span className="text-xs font-semibold text-white/70 group-hover:text-[#ffb340] transition-colors leading-tight text-center">
+                      <span className="text-[10px] sm:text-xs font-semibold text-white/70 group-hover:text-[#ffb340] transition-colors leading-tight text-center">
                         {skill.name}
                       </span>
                     </motion.div>
