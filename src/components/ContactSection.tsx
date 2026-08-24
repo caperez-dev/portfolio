@@ -37,8 +37,6 @@ function FlagImg({ flag, className = '' }: { flag: string; className?: string })
 const appleFontStack =
   "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Helvetica Neue', sans-serif";
 
-const CONTACT_WEBHOOK_URL = 'https://hook.us2.make.com/frd17b865c7kqq1u3xtioldpnruiko6s';
-
 interface ContactSectionProps {
   currentTheme: ThemeOption;
   isDarkMode: boolean;
@@ -197,7 +195,7 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
     const phonePayload    = normalizedPhone.startsWith('+') ? normalizedPhone : `${countryCode} ${normalizedPhone}`;
 
     try {
-      const response = await fetch(CONTACT_WEBHOOK_URL, {
+      const response = await fetch('/api/contact-webhook', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
