@@ -161,18 +161,24 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
 
   const [countryCode, setCountryCode]               = useState('+1');
   const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
+  const [countrySearch, setCountrySearch] = useState('');
   const countryDropdownRef = useRef<HTMLDivElement | null>(null);
+  const countrySearchRef = useRef<HTMLInputElement | null>(null);
 
   const [fieldErrors, setFieldErrors]   = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitResult, setSubmitResult] = useState<ContactSubmitResponse | null>(null);
 
   const selectedCountry = countryCodes.find((c) => c.dialCode === countryCode) ?? countryCodes[0];
+  const filteredCountries = countryCodes.filter((country) =>
+    country.name.toLowerCase().startsWith(countrySearch.trim().toLowerCase())
+  );
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (countryDropdownRef.current && !countryDropdownRef.current.contains(e.target as Node)) {
         setIsCountryDropdownOpen(false);
+        setCountrySearch('');
       }
     };
     document.addEventListener('mousedown', handler);
@@ -385,7 +391,14 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
                       <div className="relative" ref={countryDropdownRef}>
                         <button
                           type="button"
-                          onClick={() => setIsCountryDropdownOpen((prev) => !prev)}
+                          onClick={() => {
+                            setIsCountryDropdownOpen((prev) => {
+                              const next = !prev;
+                              if (next) requestAnimationFrame(() => countrySearchRef.current?.focus());
+                              else setCountrySearch('');
+                              return next;
+                            });
+                          }}
                           className={`flex items-center gap-1 px-3.5 py-2.5 rounded-xl text-xs border transition-all focus:outline-none ${
                             fieldErrors.phone ? 'border-red-500' : 'border-white/10 focus:border-[#ff9500]/50 focus:ring-1 focus:ring-[#ff9500]/40'
                           } bg-white/[0.04] text-white`}
@@ -395,17 +408,33 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
                         </button>
                         {isCountryDropdownOpen && (
                           <div className="absolute z-20 mt-2 max-h-72 w-52 overflow-auto rounded-2xl border border-white/10 bg-[#141414] shadow-2xl">
-                            {countryCodes.map((country) => (
+                            <input
+                              ref={countrySearchRef}
+                              type="search"
+                              value={countrySearch}
+                              onChange={(e) => setCountrySearch(e.target.value)}
+                              placeholder="Search country"
+                              aria-label="Search country"
+                              className="sticky top-0 z-10 w-full border-b border-white/10 bg-[#141414] px-3 py-2.5 text-xs text-white placeholder-white/35 focus:outline-none"
+                            />
+                            {filteredCountries.map((country) => (
                               <button
                                 key={country.dialCode + country.name}
                                 type="button"
-                                onClick={() => { setCountryCode(country.dialCode); setIsCountryDropdownOpen(false); }}
+                                onClick={() => {
+                                  setCountryCode(country.dialCode);
+                                  setIsCountryDropdownOpen(false);
+                                  setCountrySearch('');
+                                }}
                                 className="w-full px-3 py-2 text-left text-xs text-white hover:bg-white/[0.04] flex items-center gap-2"
                               >
                                 <FlagImg flag={country.flag} className="shrink-0 rounded-sm" />
                                 <span>{country.name}</span>
                               </button>
                             ))}
+                            {filteredCountries.length === 0 && (
+                              <p className="px-3 py-3 text-xs text-white/50">No countries found.</p>
+                            )}
                           </div>
                         )}
                       </div>
