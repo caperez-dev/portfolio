@@ -39,10 +39,12 @@ const CubeIcon = () => (
 // Brand photo mapping
 const skillLogoMap: Record<string, string> = {
   angular:       new URL('../assets/skills/angularjs.png',      import.meta.url).href,
+  androidstudio: new URL('../assets/skills/androidstudio.png', import.meta.url).href,
   bootstrap:     new URL('../assets/skills/bootstrap.png',      import.meta.url).href,
   canva:         new URL('../assets/skills/canva.png',          import.meta.url).href,
   css3:          new URL('../assets/skills/CSS3.png',           import.meta.url).href,
   drawio:        new URL('../assets/skills/drawio.png',         import.meta.url).href,
+  dart:          new URL('../assets/skills/dart.png',           import.meta.url).href,
   express:       new URL('../assets/skills/expressjs.png',      import.meta.url).href,
   figma:         new URL('../assets/skills/figma.png',          import.meta.url).href,
   firebase:      new URL('../assets/skills/firebase.png',       import.meta.url).href,
@@ -55,6 +57,8 @@ const skillLogoMap: Record<string, string> = {
   javascript:    new URL('../assets/skills/javascript.png',     import.meta.url).href,
   typescript:    new URL('../assets/skills/typescript.png',     import.meta.url).href,
   laravel:       new URL('../assets/skills/phplaravel.png',     import.meta.url).href,
+  flutter:       new URL('../assets/skills/flutter.png',         import.meta.url).href,
+  kotlin:        new URL('../assets/skills/kotlin.png',          import.meta.url).href,
   materializecss:new URL('../assets/skills/materializecss.png', import.meta.url).href,
   mysql:         new URL('../assets/skills/mysqlworkbench.png', import.meta.url).href,
   patchmypc:     new URL('../assets/skills/patchmypc.png',      import.meta.url).href,

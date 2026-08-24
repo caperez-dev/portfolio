@@ -3,7 +3,7 @@ import { ResumeData } from '../types';
 export const resumeData: ResumeData = {
   name: "Carlos Alfonso B. Perez",
   headline: "Hi, my name is\nCarlos Alfonso Perez.\nI build websites for you.",
-  punchingStatement: "Full-stack developer specializing in Web & Mobile Development, building modern applications that people can actually use. Driven to create solutions that solve problems for clients.",  contact: {
+  punchingStatement: "I build modern applications and automate repetitive business processes so teams can operate faster, reduce manual work, and deliver better results for their clients.",  contact: {
     location: "Makati City, Metro Manila, Philippines",
     phone: "+63 9774279909",
     email: "alfonso.cperez08@gmail.com",
@@ -36,6 +36,15 @@ export const resumeData: ResumeData = {
         category: "Automation",
         skills: [
           { name: "Make", logoKey: "make", filterCategory: "automation" }
+        ]
+      },
+      {
+        category: "Mobile Development",
+        skills: [
+          { name: "Android Studio", logoKey: "androidstudio", filterCategory: "mobile" },
+          { name: "Dart",           logoKey: "dart",          filterCategory: "mobile" },
+          { name: "Flutter",        logoKey: "flutter",       filterCategory: "mobile" },
+          { name: "Kotlin",         logoKey: "kotlin",        filterCategory: "mobile" }
         ]
       },
       {
