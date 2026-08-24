@@ -44,7 +44,9 @@ export function Navbar({
   return (
     <header
       id="main-navbar"
-      className="fixed top-3 sm:top-4 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-1.5rem)] max-w-[900px] sm:w-[min(900px,78vw)] rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.25)]"
+      className={`fixed top-3 sm:top-4 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-1.5rem)] max-w-[900px] sm:w-[min(900px,78vw)] overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.25)] ${
+        isMobileMenuOpen ? 'rounded-2xl' : 'rounded-full'
+      }`}
       style={{
         background: 'rgba(28, 28, 30, 0.72)',
         backdropFilter: 'blur(20px) saturate(180%)',
@@ -164,11 +166,6 @@ export function Navbar({
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.22, ease: 'easeOut' }}
             className="lg:hidden border-t border-white/8 px-3 pt-2 pb-3 space-y-0.5 overflow-hidden"
-            style={{
-              background: 'rgba(28, 28, 30, 0.72)',
-              borderBottomLeftRadius: '9999px',
-              borderBottomRightRadius: '9999px'
-            }}
           >
             {navLinks.map((link) => {
               const isActive = activeSection === link.href.replace('#', '');
