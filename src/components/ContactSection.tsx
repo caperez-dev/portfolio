@@ -37,6 +37,8 @@ function FlagImg({ flag, className = '' }: { flag: string; className?: string })
 const appleFontStack =
   "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Helvetica Neue', sans-serif";
 
+const CONTACT_WEBHOOK_URL = 'https://hook.us2.make.com/frd17b865c7kqq1u3xtioldpnruiko6s';
+
 interface ContactSectionProps {
   currentTheme: ThemeOption;
   isDarkMode: boolean;
@@ -195,26 +197,32 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
     const phonePayload    = normalizedPhone.startsWith('+') ? normalizedPhone : `${countryCode} ${normalizedPhone}`;
 
     try {
-      const response = await fetch('/api/contact', {
+      const response = await fetch(CONTACT_WEBHOOK_URL, {
         method: 'POST',
-        credentials: 'same-origin',
         headers: {
-          'Content-Type': 'application/json',
-          'x-vercel-protection-bypass': '1'
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({ ...formData, phone: phonePayload })
       });
 
-      const data: ContactSubmitResponse = await response.json();
+      let data: Partial<ContactSubmitResponse> = {};
+      try {
+        data = await response.json();
+      } catch {
+        // Make webhooks may return an empty or non-JSON response.
+      }
 
-      if (!response.ok || !data.success) {
+      if (!response.ok) {
         if (data.errors) setFieldErrors(data.errors);
         setSubmitResult({
           success: false,
           message: data.message || 'Failed to submit contact message. Please try again.'
         });
       } else {
-        setSubmitResult(data);
+        setSubmitResult({
+          success: true,
+          message: data.message || 'Your message has been sent.'
+        });
         setFormData({ fullName: '', email: '', phone: '', subject: '', message: '' });
       }
     } catch {
