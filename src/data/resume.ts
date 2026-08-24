@@ -33,6 +33,12 @@ export const resumeData: ResumeData = {
         ]
       },
       {
+        category: "Automation",
+        skills: [
+          { name: "Make", logoKey: "make", filterCategory: "automation" }
+        ]
+      },
+      {
         category: "Programming Languages",
         skills: [
           { name: "PHP",        logoKey: "php",        filterCategory: "backend"  },

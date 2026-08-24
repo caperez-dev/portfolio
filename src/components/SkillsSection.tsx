@@ -13,7 +13,7 @@ interface SkillsSectionProps {
 }
 
 // Filter tab definition
-type FilterId = 'all' | 'frontend' | 'backend' | 'mobile' | 'databases' | 'design' | 'packaging' | 'devops';
+type FilterId = 'all' | 'frontend' | 'backend' | 'mobile' | 'databases' | 'design' | 'automation' | 'packaging' | 'devops';
 
 const FILTERS: { id: FilterId; label: string }[] = [
   { id: 'all',       label: 'All' },
@@ -22,6 +22,7 @@ const FILTERS: { id: FilterId; label: string }[] = [
   { id: 'mobile',    label: 'Mobile' },
   { id: 'databases', label: 'Databases' },
   { id: 'design',    label: 'Design' },
+  { id: 'automation',label: 'Automation' },
   { id: 'devops',    label: 'DevOps & Tools' },
   { id: 'packaging', label: 'Software Packaging' },
 ];
@@ -60,6 +61,7 @@ const skillLogoMap: Record<string, string> = {
   php:           new URL('../assets/skills/php.png',            import.meta.url).href,
   powershell:    new URL('../assets/skills/powershell.png',     import.meta.url).href,
   react:         new URL('../assets/skills/reactjs.png',        import.meta.url).href,
+  make:          new URL('../assets/skills/make.png',           import.meta.url).href,
   sdlc:          new URL('../assets/skills/sdlc.png',           import.meta.url).href,
   trello:        new URL('../assets/skills/trello.png',         import.meta.url).href,
   servicenow:    new URL('../assets/skills/servicenow.png',     import.meta.url).href,
