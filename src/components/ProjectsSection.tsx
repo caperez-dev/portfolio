@@ -14,6 +14,9 @@ import {
   X
 } from 'lucide-react';
 
+const appleFontStack =
+  "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Helvetica Neue', sans-serif";
+
 const quizzleVideo = new URL('../assets/projects/quizzle_video.mp4', import.meta.url).href;
 const summitVideo = new URL('../assets/projects/summit_video.mp4', import.meta.url).href;
 
@@ -236,7 +239,7 @@ export function ProjectsSection({ currentTheme, isDarkMode }: ProjectsSectionPro
   };
 
   return (
-    <section id="projects" className="py-16 sm:py-20 border-t border-white/8 relative scroll-mt-16">
+    <section id="projects" className="py-16 sm:py-20 border-t border-white/8 relative scroll-mt-16" style={{ fontFamily: appleFontStack }}>
       {/* Wider than the standard content column — bleed to near full viewport */}
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}

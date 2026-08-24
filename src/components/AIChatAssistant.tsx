@@ -225,7 +225,7 @@ export function AIChatAssistant({
           className="p-3.5 border-b flex items-center justify-between text-white"
           style={{ backgroundColor: isDarkMode ? currentTheme.darkCard : currentTheme.lightAccent }}
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-0 sm:gap-2">
             <img src={carlosBranding} alt="Carlos" className="w-8 h-8 rounded-full object-cover shrink-0" />
             <div>
               <div className="text-xs font-bold font-mono flex items-center gap-1.5">

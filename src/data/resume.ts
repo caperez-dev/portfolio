@@ -3,7 +3,7 @@ import { ResumeData } from '../types';
 export const resumeData: ResumeData = {
   name: "Carlos Alfonso B. Perez",
   headline: "Hi, my name is\nCarlos Alfonso Perez.\nI build websites for you.",
-  punchingStatement: "Full-stack developer specializing in Web & Mobile Development, building modern applications that people can actually use. Driven to create solutions that solve real problems for clients.",  contact: {
+  punchingStatement: "Full-stack developer specializing in Web & Mobile Development, building modern applications that people can actually use. Driven to create solutions that solve problems for clients.",  contact: {
     location: "Makati City, Metro Manila, Philippines",
     phone: "+63 9774279909",
     email: "alfonso.cperez08@gmail.com",
