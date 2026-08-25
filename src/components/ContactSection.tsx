@@ -198,7 +198,9 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
     setFieldErrors({});
 
     const normalizedPhone = formData.phone.trim();
-    const phonePayload    = normalizedPhone.startsWith('+') ? normalizedPhone : `${countryCode} ${normalizedPhone}`;
+    const phonePayload = normalizedPhone
+      ? (normalizedPhone.startsWith('+') ? normalizedPhone : `${countryCode} ${normalizedPhone}`)
+      : '-';
 
     try {
       const response = await fetch('/api/contact-webhook', {
