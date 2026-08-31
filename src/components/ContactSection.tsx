@@ -505,5 +505,3 @@ export function ContactSection({ currentTheme, isDarkMode }: ContactSectionProps
     </section>
   );
 }
-
-// END OF CODE
