@@ -81,7 +81,10 @@ export const resumeData: ResumeData = {
         category: "Version Control",
         skills: [
           { name: "Git",    logoKey: "git",    filterCategory: "devops" },
-          { name: "GitHub", logoKey: "github", filterCategory: "devops" }
+          { name: "GitHub",    logoKey: "github",    filterCategory: "devops" },
+          { name: "Vercel",      logoKey: "vercel",      filterCategory: "devops" },
+          { name: "Hostinger",   logoKey: "hostinger",   filterCategory: "devops" },
+          { name: "InfinityFree", logoKey: "infinityfree", filterCategory: "devops" }
         ]
       },
       {

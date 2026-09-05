@@ -69,6 +69,9 @@ const skillLogoMap: Record<string, string> = {
   sdlc:          new URL('../assets/skills/sdlc.png',           import.meta.url).href,
   trello:        new URL('../assets/skills/trello.png',         import.meta.url).href,
   servicenow:    new URL('../assets/skills/servicenow.png',     import.meta.url).href,
+  vercel:        new URL('../assets/skills/vercel.png',         import.meta.url).href,
+  hostinger:     new URL('../assets/skills/hostinger.png',      import.meta.url).href,
+  infinityfree:  new URL('../assets/skills/infinityfree.png',   import.meta.url).href,
 };
 
 function getSkillIcon(name: string, logoKey?: string) {
